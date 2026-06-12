@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thumbnail Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0c0d10;
+      --surface: #14161c;
+      --surface-2: #1c1f28;
+      --border: #252932;
+      --accent: #e63f2e;
+      --accent-yellow: #f5c518;
+      --accent-blue: #3b8beb;
+      --text: #e8eaf0;
+      --text-muted: #7a8099;
+      --text-dim: #454b5e;
+      --radius: 10px;
+      --font: 'Space Grotesk', sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      background: rgba(12,13,16,0.92);
+      backdrop-filter: blur(10px);
+      z-index: 10;
+    }
+
+    .logo-badge {
+      width: 36px; height: 36px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: grid; place-items: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    header h1 {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    header p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    /* ── Layout ── */
+    .app {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      display: grid;
+      gap: 28px;
+    }
+
+    /* ── Section card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-num {
+      width: 24px; height: 24px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      display: grid; place-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .card-header h2 {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.1px;
+    }
+
+    .card-body { padding: 20px; }
+
+    /* ── Inputs ── */
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+      resize: vertical;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--accent-blue);
+    }
+
+    .field { margin-bottom: 16px; }
+    .field:last-child { margin-bottom: 0; }
+
+    .hint {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 5px;
+    }
+
+    /* ── 2-col grid ── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* ── Upload zones ── */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 24px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      position: relative;
+    }
+
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: var(--accent-blue);
+      background: rgba(59,139,235,0.04);
+    }
+
+    .upload-zone.has-file {
+      border-style: solid;
+      border-color: #2a5c3a;
+      background: rgba(42,92,58,0.08);
+    }
+
+    .upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .upload-icon { font-size: 24px; margin-bottom: 6px; }
+
+    .upload-zone p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .upload-zone .file-name {
+      font-size: 12px;
+      font-family: var(--mono);
+      color: #4ade80;
+      margin-top: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ── Preview thumbnails ── */
+    .preview-img {
+      width: 100%;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-top: 8px;
+      display: none;
+    }
+
+    /* ── Generate button ── */
+    .btn-generate {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-generate:hover { opacity: 0.88; }
+    .btn-generate:active { transform: scale(0.99); }
+
+    /* ── Output area ── */
+    .output-box {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 18px;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.75;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+      min-height: 200px;
+      position: relative;
+    }
+
+    .output-box.placeholder { color: var(--text-dim); font-style: italic; }
+
+    .copy-btn {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      font-family: var(--font);
+      font-size: 12px;
+      padding: 4px 10px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .copy-btn:hover { color: var(--text); border-color: var(--text-muted); }
+
+    /* ── Checklist ── */
+    .checklist { list-style: none; display: grid; gap: 8px; }
+
+    .checklist li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .checklist li input[type="checkbox"] {
+      accent-color: var(--accent);
+      width: 16px; height: 16px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .checklist li.checked { color: var(--text); text-decoration: line-through; opacity: 0.5; }
+
+    /* ── Arena link ── */
+    .arena-link-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(59,139,235,0.08);
+      border: 1px solid rgba(59,139,235,0.25);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 16px;
+    }
+
+    .arena-link-bar span { font-size: 13px; color: var(--text-muted); flex: 1; }
+
+    .arena-link-bar a {
+      background: var(--accent-blue);
+      color: #fff;
+      text-decoration: none;
+      padding: 7px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: opacity 0.15s;
+    }
+
+    .arena-link-bar a:hover { opacity: 0.85; }
+
+    /* ── Tags ── */
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 4px;
+      letter-spacing: 0.4px;
+    }
+
+    .tag-red { background: rgba(230,63,46,0.15); color: #f97a6e; border: 1px solid rgba(230,63,46,0.25); }
+    .tag-yellow { background: rgba(245,197,24,0.12); color: #f5c518; border: 1px solid rgba(245,197,24,0.2); }
+    .tag-blue { background: rgba(59,139,235,0.12); color: #7ab8f5; border: 1px solid rgba(59,139,235,0.2); }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      background: #1e2430;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 13px;
+      color: #4ade80;
+      transform: translateY(10px);
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-badge">🎬</div>
+  <div>
+    <h1>Thumbnail Assistant</h1>
+    <p>Generate high-CTR YouTube thumbnails in ~90 seconds</p>
+  </div>
+</header>
+
+<div class="app">
+
+  <!-- STEP 1: References -->
+  <div class="card">
+    <div class="card-header">
+      <span class="step-num">1</span>
+      <h2>Upload Reference Images</h2>
+    </div>
+    <div class="card-body">
+      <div class="grid-2">
+        <div>
+          <label>Your Face Reference</label>
+          <div class="upload-zone" id="faceZone">
+            <input type="file" id="faceInput" accept="image/*" />
+            <div class="upload-icon">👤</div>
+            <p>Drop face photo here<br/><span style="color:var(--text-dim);font-size:11px">PNG/JPG · 512×512 min</span></p>
+            <div class="file-name" id="faceName"></div>
+          </div>
+          <img class="preview-img" id="facePreview" />
+        </div>
+        <div>
+          <label>Competitor Thumbnail</label>
+          <div class="upload-zone" id="compZone">
+            <input type="file" id="compInput" accept="image/*" />
+            <div class="upload-icon">🎯</div>
+            <p>Drop competitor thumb here<br/><span style="color:var(--text-dim);font-size:11px">From YouTube · any size</span></p>
+            <div class="file-name" id="compName"></div>
+          </div>
+          <img class="preview-img" id="compPreview" />
+        </div>
+      </div>
+      <p class="hint" style="margin-top:12px">💡 Grab a competitor thumbnail: <code style="background:var(--surface-2);padding:2px 6px;border-radius:4px;font-size:11px">https://i.ytimg.com/vi/VIDEO_ID/maxresdefault.jpg</code></p>
+    </div>
+  </div>
+
+  <!-- STEP 2: Headline -->
+  <div class="card">
+    <div class="card-header">
+      <span class="step-num">2</span>
+      <h2>Your Headline &amp; Concept</h2>
+    </div>
+    <div class="card-body">
+      <div class="tags">
+        <span class="tag tag-red">RED BANNER TOP</span>
+        <span class="tag tag-yellow">YELLOW KEY WORDS</span>
+        <span class="tag tag-blue">WHITE MAIN TEXT</span>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Headline — Red Banner (top)</label>
+          <input type="text" id="headlineTop" placeholder="WHAT YOUR FEET KNOW!" />
+          <p class="hint">Short hook — fits a red banner</p>
+        </div>
+        <div class="grid-2" style="gap:10px">
+          <div class="field">
+            <label>Main text (white)</label>
+            <input type="text" id="headlineWhite" placeholder="9 SIGNS" />
+          </div>
+          <div class="field">
+            <label>Key words (yellow)</label>
+            <input type="text" id="headlineYellow" placeholder="OF DIABETES!" />
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Hero Object / Concept</label>
+        <textarea id="concept" rows="3" placeholder="Photorealistic close-up of a bare senior adult foot, clean and well-lit, with small red circles highlighting subtle problem areas on the toes and heel, a glucometer and test strip placed near the foot."></textarea>
+        <p class="hint">One hero object, visible at 320×180px. Silhouette first, details second.</p>
+      </div>
+      <div class="field">
+        <label>Person in thumbnail (gender/pronoun)</label>
+        <input type="text" id="personDesc" placeholder="the man" />
+        <p class="hint">Use "the man" or "the woman" — never describe appearance, just point at the photo.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: Generate -->
+  <div class="card">
+    <div class="card-header">
+      <span class="step-num">3</span>
+      <h2>Generate Prompt</h2>
+    </div>
+    <div class="card-body">
+      <button class="btn-generate" onclick="generatePrompt()">
+        ⚡ Build My Prompt
+      </button>
+
+      <div class="arena-link-bar">
+        <span>Paste the prompt + attach both images on arena.ai → Nano Banana Pro</span>
+        <a href="https://arena.ai/image/direct" target="_blank">Open arena.ai →</a>
+      </div>
+
+      <div style="margin-top: 20px; position: relative;">
+        <label>Generated Prompt</label>
+        <div class="output-box placeholder" id="outputBox">Your prompt will appear here after clicking "Build My Prompt"…</div>
+        <button class="copy-btn" id="copyBtn" onclick="copyPrompt()" style="display:none">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: Checklist -->
+  <div class="card">
+    <div class="card-header">
+      <span class="step-num">4</span>
+      <h2>Reproducibility Checklist</h2>
+    </div>
+    <div class="card-body">
+      <ul class="checklist" id="checklist">
+        <li><input type="checkbox" onchange="toggleCheck(this)" /> Face matches your persona (compare side-by-side)</li>
+        <li><input type="checkbox" onchange="toggleCheck(this)" /> Headline is spelled correctly (Nano Banana drifts)</li>
+        <li><input type="checkbox" onchange="toggleCheck(this)" /> Face is on the right third, not centered or left</li>
+        <li><input type="checkbox" onchange="toggleCheck(this)" /> Main concept object is clearly visible and centered</li>
+        <li><input type="checkbox" onchange="toggleCheck(this)" /> Red arrow and yellow warning triangle are present</li>
+        <li><input type="checkbox" onchange="toggleCheck(this)" /> Text is readable at 320×180 (actually scale it down!)</li>
+        <li><input type="checkbox" onchange="toggleCheck(this)" /> No watermarks, brand names, or ghost faces in background</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Tips -->
+  <div class="card">
+    <div class="card-header">
+      <span class="step-num">💡</span>
+      <h2>Quick Tips</h2>
+    </div>
+    <div class="card-body" style="display:grid;gap:10px">
+      <div style="font-size:13px;display:flex;gap:10px;align-items:flex-start">
+        <span>🔴</span>
+        <span><strong>Red + Yellow are non-negotiable.</strong> Blue bg, red arrows, yellow warning triangle, yellow key-word text. A/B tested across every major channel.</span>
+      </div>
+      <div style="font-size:13px;display:flex;gap:10px;align-items:flex-start">
+        <span>👤</span>
+        <span><strong>The face reference controls everything.</strong> If Nano Banana generates a different person, re-shoot: good light, 3/4 or front-facing, ≥1024×1024.</span>
+      </div>
+      <div style="font-size:13px;display:flex;gap:10px;align-items:flex-start">
+        <span>📐</span>
+        <span><strong>One hero object only.</strong> "A foot + glucometer" works. Complex scenes don't — 320px on a phone screen.</span>
+      </div>
+      <div style="font-size:13px;display:flex;gap:10px;align-items:flex-start">
+        <span>🔤</span>
+        <span><strong>Max 4 words on the main headline.</strong> Trust the curiosity gap — the full story lives in the video.</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">✅ Copied to clipboard!</div>
+
+<script>
+  // ── File upload handling ──
+  function setupUpload(inputId, zoneId, nameId, previewId) {
+    const input = document.getElementById(inputId);
+    const zone  = document.getElementById(zoneId);
+    const name  = document.getElementById(nameId);
+    const prev  = document.getElementById(previewId);
+
+    function handle(file) {
+      if (!file || !file.type.startsWith('image/')) return;
+      name.textContent = file.name;
+      zone.classList.add('has-file');
+      const url = URL.createObjectURL(file);
+      prev.src = url;
+      prev.style.display = 'block';
+    }
+
+    input.addEventListener('change', () => handle(input.files[0]));
+
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      handle(e.dataTransfer.files[0]);
+    });
+  }
+
+  setupUpload('faceInput', 'faceZone', 'faceName', 'facePreview');
+  setupUpload('compInput',  'compZone',  'compName',  'compPreview');
+
+  // ── Prompt generation ──
+  function generatePrompt() {
+    const top    = document.getElementById('headlineTop').value.trim()    || '[HEADLINE_TOP]';
+    const white  = document.getElementById('headlineWhite').value.trim()  || '[HEADLINE_MAIN_WHITE]';
+    const yellow = document.getElementById('headlineYellow').value.trim() || '[HEADLINE_MAIN_YELLOW]';
+    const concept = document.getElementById('concept').value.trim()       || '[CONCEPT_DESCRIPTION]';
+    const person = document.getElementById('personDesc').value.trim()     || 'the person';
+
+    const prompt = `YouTube thumbnail, 16:9, 1920x1080, HIGH CONTRAST CLICK-BAIT STYLE.
+
+Background: smooth vertical blue gradient (light sky blue at top, slightly darker saturated blue at bottom). Clean, no noise.
+
+RIGHT SIDE: photorealistic portrait of ${person} in the attached face reference — match his/her face, hair, outfit, and warm confident expression EXACTLY. 3/4 angle, clean cutout with subtle drop shadow. Do not invent a different person.
+
+LEFT SIDE: huge bold sans-serif text. Primary words in white, KEY WORDS in bright yellow. Heavy black outline (~6px), soft drop shadow. ALL CAPS, extreme weight (900).
+- Top-left in a RED BANNER: "${top}"
+- Main headline stacked underneath: "${white}" (white) then "${yellow}" (bright yellow)
+
+CENTER: ${concept}.
+
+Accents: red curved arrow pointing at the main object, small yellow warning triangle in the upper area, highlight circles. High saturation, tight negative space.
+
+Must read clearly at 320x180 on a phone.
+
+NO watermarks, NO logos, NO brand names, NO faces other than the attached reference. Use the layout and style of the second reference image (blue gradient, bold text left, face right, red arrows, yellow warning triangle) but DO NOT copy its text — use the new headline above, and replace its center concept with the one described.`;
+
+    const box = document.getElementById('outputBox');
+    box.textContent = prompt;
+    box.classList.remove('placeholder');
+
+    const copyBtn = document.getElementById('copyBtn');
+    copyBtn.style.display = 'block';
+
+    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // ── Copy ──
+  function copyPrompt() {
+    const text = document.getElementById('outputBox').textContent;
+    navigator.clipboard.writeText(text).then(() => showToast());
+  }
+
+  function showToast() {
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  // ── Checklist ──
+  function toggleCheck(cb) {
+    cb.parentElement.classList.toggle('checked', cb.checked);
+  }
+</script>
+</body>
+</html>
