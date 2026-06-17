@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>Thumbnail Cloner — Kalse Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#05060d;
+  --s1:#0a0c18;
+  --s2:#0f1220;
+  --s3:#161928;
+  --border:#1a1d2e;
+  --border2:#252840;
+  --gold:#d4a843;
+  --gold2:#f0c96a;
+  --red:#e63f2e;
+  --blue:#3b82f6;
+  --green:#22c55e;
+  --purple:#a855f7;
+  --cyan:#06b6d4;
+  --text:#edeef5;
+  --muted:#5c6080;
+  --dim:#1e2038;
+  --r:14px;
+}
+
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6}
+
+/* ── AMBIENT BG ── */
+.ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.amb-blob{position:absolute;border-radius:50%;filter:blur(120px);opacity:0.06;animation:ambdrift 25s ease-in-out infinite}
+.ab1{width:600px;height:600px;background:radial-gradient(var(--gold),transparent);top:-200px;left:-100px;animation-delay:0s}
+.ab2{width:500px;height:500px;background:radial-gradient(var(--purple),transparent);bottom:-150px;right:-100px;animation-delay:-10s}
+.ab3{width:350px;height:350px;background:radial-gradient(var(--cyan),transparent);top:50%;left:50%;animation-delay:-18s}
+@keyframes ambdrift{0%,100%{transform:translate(0,0) scale(1)}40%{transform:translate(40px,-30px) scale(1.08)}70%{transform:translate(-25px,40px) scale(0.94)}}
+
+/* ── LAYOUT ── */
+.wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 20px 60px}
+
+/* ── HEADER ── */
+.header{padding:28px 0 32px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{width:40px;height:40px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:10px;display:grid;place-items:center;font-size:18px;flex-shrink:0;box-shadow:0 4px 20px rgba(212,168,67,0.3)}
+.brand-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--gold),var(--gold2),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.brand-sub{font-size:11px;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase}
+.header-back{color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px;transition:color 0.2s;border:1px solid var(--border);padding:7px 14px;border-radius:20px}
+.header-back:hover{color:var(--text);border-color:var(--border2)}
+
+/* ── HERO ── */
+.hero{padding:40px 0 28px;text-align:center}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(212,168,67,0.08);border:1px solid rgba(212,168,67,0.2);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:20px}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(28px,6vw,48px);font-weight:800;letter-spacing:-1.5px;line-height:1.1;margin-bottom:14px}
+.hero h1 span{background:linear-gradient(135deg,var(--gold),var(--gold2),var(--red));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:15px;color:var(--muted);max-width:520px;margin:0 auto}
+
+/* ── STEP INDICATOR ── */
+.steps{display:flex;align-items:center;justify-content:center;gap:0;margin:28px 0;flex-wrap:wrap;row-gap:10px}
+.step{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--muted);transition:color 0.3s}
+.step.active{color:var(--gold)}
+.step.done{color:var(--green)}
+.step-num{width:26px;height:26px;border-radius:50%;border:2px solid currentColor;display:grid;place-items:center;font-size:11px;font-weight:700;flex-shrink:0;transition:all 0.3s}
+.step.active .step-num{background:var(--gold);border-color:var(--gold);color:#000}
+.step.done .step-num{background:var(--green);border-color:var(--green);color:#000}
+.step-line{width:40px;height:1px;background:var(--dim);margin:0 4px}
+@media(max-width:500px){.step-line{width:20px}.steps{gap:0}}
+
+/* ── SECTION PANEL ── */
+.panel{background:rgba(10,12,24,0.8);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:var(--r);margin-bottom:16px;overflow:hidden;transition:border-color 0.3s}
+.panel:hover{border-color:var(--border2)}
+.panel-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.panel-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700}
+.panel-body{padding:20px}
+
+/* ── INPUT METHODS ── */
+.method-tabs{display:flex;gap:6px;margin-bottom:18px;background:var(--s2);border-radius:10px;padding:4px}
+.method-tab{flex:1;padding:8px;border:none;background:none;border-radius:8px;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.method-tab.active{background:var(--s3);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+
+/* ── URL INPUT ── */
+.url-input-row{display:flex;gap:10px}
+.url-input-row input{flex:1;min-width:0}
+input[type=text],input[type=url],textarea{width:100%;background:rgba(15,18,32,0.9);border:1px solid var(--border);border-radius:10px;padding:11px 16px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:all 0.2s;-webkit-appearance:none;appearance:none}
+input:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,168,67,0.08)}
+textarea{resize:vertical;min-height:80px}
+.hint{font-size:11px;color:var(--muted);margin-top:5px}
+label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.7px;color:var(--muted);margin-bottom:6px}
+
+/* ── THUMBNAIL PREVIEW ── */
+.thumb-preview-area{display:none;margin-top:16px}
+.thumb-preview-area.show{display:block}
+.preview-wrap{position:relative;border-radius:10px;overflow:hidden;background:var(--s3);aspect-ratio:16/9;max-height:300px;border:1px solid var(--border2)}
+.preview-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.preview-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 50%);pointer-events:none}
+.preview-badge{position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 10px;font-size:11px;color:#fff;font-weight:600}
+.preview-reload{position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:5px 10px;font-size:11px;color:#fff;cursor:pointer;backdrop-filter:blur(8px);transition:all 0.2s}
+.preview-reload:hover{background:rgba(212,168,67,0.3);border-color:var(--gold)}
+
+/* ── UPLOAD DROP ── */
+.drop-zone{border:2px dashed var(--border);border-radius:10px;padding:30px 20px;text-align:center;cursor:pointer;position:relative;transition:all 0.2s;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--gold);background:rgba(212,168,67,0.03)}
+.drop-zone.filled{border-style:solid;border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.04)}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.drop-icon{font-size:28px;opacity:0.7}
+.drop-text{font-size:13px;color:var(--muted)}
+.drop-sub{font-size:11px;color:var(--dim)}
+.drop-filename{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--green);margin-top:4px}
+.drop-preview{width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-top:10px;display:none}
+
+/* ── AVATAR OPTIONS ── */
+.avatar-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+@media(max-width:500px){.avatar-options{grid-template-columns:1fr 1fr}}
+.avatar-opt{background:var(--s2);border:2px solid var(--border);border-radius:10px;padding:12px 10px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:12px;color:var(--muted);font-weight:500}
+.avatar-opt:hover{border-color:var(--gold);color:var(--text)}
+.avatar-opt.selected{border-color:var(--gold);background:rgba(212,168,67,0.08);color:var(--gold)}
+.avatar-opt .ao-icon{font-size:22px;margin-bottom:5px;display:block}
+
+/* ── PERSONA UPLOAD ── */
+.persona-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:500px){.persona-row{grid-template-columns:1fr}}
+.persona-face-drop{border:2px dashed var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;position:relative;transition:all 0.2s}
+.persona-face-drop:hover{border-color:var(--gold)}
+.persona-face-drop.filled{border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.04)}
+.persona-face-drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.persona-face-preview{width:60px;height:60px;border-radius:50%;object-fit:cover;margin:0 auto 6px;display:none}
+
+/* ── NICHE PILLS ── */
+.niche-pills{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:4px}
+.niche-pill{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--muted);background:var(--s2);transition:all 0.2s;white-space:nowrap}
+.niche-pill:hover,.niche-pill.active{background:rgba(212,168,67,0.1);border-color:rgba(212,168,67,0.3);color:var(--gold)}
+
+/* ── ANALYZE BUTTON ── */
+.analyze-btn{width:100%;padding:16px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0a0700;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:-0.3px;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden}
+.analyze-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent,rgba(255,255,255,0.15));opacity:0;transition:opacity 0.2s}
+.analyze-btn:hover::before{opacity:1}
+.analyze-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(212,168,67,0.4)}
+.analyze-btn:active{transform:translateY(0)}
+.analyze-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+
+/* ── PROGRESS BAR ── */
+.progress-wrap{display:none;margin-top:16px}
+.progress-wrap.show{display:block}
+.progress-bar{height:3px;background:var(--dim);border-radius:3px;overflow:hidden;margin-bottom:10px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:3px;width:0%;transition:width 0.5s ease;animation:shimmer 1.5s ease infinite}
+@keyframes shimmer{0%{opacity:1}50%{opacity:0.7}100%{opacity:1}}
+.progress-steps{display:flex;flex-direction:column;gap:6px}
+.prog-step{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);transition:color 0.3s}
+.prog-step.active{color:var(--text)}
+.prog-step.done{color:var(--green)}
+.prog-step .ps-icon{width:16px;height:16px;border-radius:50%;border:2px solid currentColor;display:grid;place-items:center;font-size:8px;flex-shrink:0;transition:all 0.3s}
+.prog-step.done .ps-icon{background:var(--green);border-color:var(--green)}
+.prog-step.active .ps-icon{border-color:var(--gold);animation:pulse 1s ease infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(212,168,67,0.4)}50%{box-shadow:0 0 0 6px rgba(212,168,67,0)}}
+
+/* ── RESULTS ── */
+.results-wrap{display:none}
+.results-wrap.show{display:block;animation:fadeup 0.4s ease}
+@keyframes fadeup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── ANALYSIS DISPLAY ── */
+.analysis-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
+@media(max-width:500px){.analysis-grid{grid-template-columns:1fr}}
+.analysis-chip{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.ac-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--muted);margin-bottom:5px}
+.ac-value{font-size:13px;color:var(--text);line-height:1.5}
+.ac-value.gold{color:var(--gold);font-weight:600}
+
+/* ── COLOR PALETTE ── */
+.color-row{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.color-swatch{width:28px;height:28px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);position:relative;cursor:pointer;transition:transform 0.2s;flex-shrink:0}
+.color-swatch:hover{transform:scale(1.2)}
+.color-swatch::after{content:attr(data-color);position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--muted);white-space:nowrap;opacity:0;transition:opacity 0.2s}
+.color-swatch:hover::after{opacity:1}
+
+/* ── ELEMENTS TAGS ── */
+.elements-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.el-tag{background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);border-radius:20px;padding:3px 10px;font-size:11px;color:#7ab8f5;font-weight:600}
+
+/* ── PROMPT OUTPUT ── */
+.prompt-box{background:rgba(5,6,13,0.9);border:1px solid var(--border);border-radius:10px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:var(--text);white-space:pre-wrap;word-break:break-word;min-height:160px;position:relative}
+.prompt-keyword{color:var(--gold);font-weight:600}
+
+/* ── ACTION BUTTONS ── */
+.action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.btn{padding:10px 18px;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0a0700;box-shadow:0 4px 15px rgba(212,168,67,0.25)}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(212,168,67,0.35)}
+.btn-ghost{background:rgba(255,255,255,0.04);color:var(--muted);border:1px solid var(--border)}
+.btn-ghost:hover{color:var(--text);border-color:var(--border2)}
+.btn-blue{background:var(--blue);color:#fff;box-shadow:0 4px 15px rgba(59,130,246,0.25)}
+.btn-blue:hover{opacity:0.88;transform:translateY(-1px)}
+
+/* ── ARENA SECTION ── */
+.arena-section{background:linear-gradient(135deg,rgba(59,130,246,0.06),rgba(168,85,247,0.04));border:1px solid rgba(59,130,246,0.15);border-radius:12px;padding:16px 18px;margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.arena-info{font-size:13px;color:var(--muted)}
+.arena-info strong{color:var(--text);display:block;margin-bottom:2px}
+.arena-link{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;text-decoration:none;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;transition:all 0.2s;white-space:nowrap}
+.arena-link:hover{transform:translateY(-1px);opacity:0.9}
+
+/* ── VARIANTS ── */
+.variants-section{margin-top:20px}
+.variants-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text)}
+.variant-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden}
+.variant-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--dim);transition:background 0.2s}
+.variant-card:hover{border-color:var(--border2);transform:translateX(2px)}
+.variant-card:hover::before{background:var(--gold)}
+.variant-card.selected{border-color:rgba(212,168,67,0.3);background:rgba(212,168,67,0.05)}
+.variant-card.selected::before{background:var(--gold)}
+.variant-style{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gold);margin-bottom:6px}
+.variant-desc{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ── HISTORY STRIP ── */
+.history-strip{margin-top:24px}
+.history-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.7px;color:var(--muted);margin-bottom:10px}
+.history-items{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
+.history-items::-webkit-scrollbar{height:3px}
+.history-items::-webkit-scrollbar-thumb{background:var(--dim);border-radius:3px}
+.hist-card{flex-shrink:0;width:130px;background:var(--s1);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all 0.2s}
+.hist-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.hist-thumb{width:100%;height:73px;object-fit:cover;background:var(--dim)}
+.hist-label{padding:6px 8px;font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(10,12,24,0.95);border:1px solid var(--border);border-radius:30px;padding:10px 22px;font-size:13px;color:var(--green);opacity:0;transition:all 0.3s;pointer-events:none;z-index:1000;white-space:nowrap;backdrop-filter:blur(12px)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:480px){
+  .header{flex-direction:column;gap:12px;align-items:flex-start}
+  .hero{padding:24px 0 20px}
+  .url-input-row{flex-direction:column}
+  .action-row{flex-direction:column}
+  .action-row .btn{width:100%;justify-content:center}
+  .arena-section{flex-direction:column}
+  .arena-link{width:100%;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<div class="ambient">
+  <div class="amb-blob ab1"></div>
+  <div class="amb-blob ab2"></div>
+  <div class="amb-blob ab3"></div>
+</div>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="brand">
+      <div class="brand-logo">🎬</div>
+      <div>
+        <div class="brand-name">Kalse Studio</div>
+        <div class="brand-sub">Thumbnail Cloner</div>
+      </div>
+    </div>
+    <a href="#" class="header-back" onclick="history.back()">← Retour</a>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">✨ IA Vision • Gratuit • Instantané</div>
+    <h1>Clone <span>n'importe quel</span><br/>thumbnail YouTube</h1>
+    <p>Colle une URL ou uploade une image — l'IA analyse le design, extrait les éléments et génère un prompt pour recréer le même style avec ton visage.</p>
+  </div>
+
+  <!-- STEP INDICATOR -->
+  <div class="steps">
+    <div class="step active" id="step1"><div class="step-num">1</div><span>Source</span></div>
+    <div class="step-line"></div>
+    <div class="step" id="step2"><div class="step-num">2</div><span>Persona</span></div>
+    <div class="step-line"></div>
+    <div class="step" id="step3"><div class="step-num">3</div><span>Analyse</span></div>
+    <div class="step-line"></div>
+    <div class="step" id="step4"><div class="step-num">4</div><span>Prompt</span></div>
+  </div>
+
+  <!-- PANEL 1: SOURCE -->
+  <div class="panel" id="panel-source">
+    <div class="panel-head">
+      <span class="panel-title">📥 Source du thumbnail</span>
+      <span style="font-size:11px;color:var(--muted)">URL ou image</span>
+    </div>
+    <div class="panel-body">
+      <div class="method-tabs">
+        <button class="method-tab active" id="tab-url" onclick="switchTab('url')">🔗 URL YouTube</button>
+        <button class="method-tab" id="tab-upload" onclick="switchTab('upload')">📁 Uploader image</button>
+        <button class="method-tab" id="tab-multi" onclick="switchTab('multi')">📦 Plusieurs à la fois</button>
+      </div>
+
+      <!-- URL TAB -->
+      <div id="tab-content-url">
+        <label>URL de la vidéo YouTube</label>
+        <div class="url-input-row">
+          <input type="url" id="yt-url-input" placeholder="https://youtube.com/watch?v=... ou https://youtu.be/..."/>
+          <button class="btn btn-gold" onclick="loadYtUrl()">Charger ↓</button>
+        </div>
+        <p class="hint">Exemples : Dr. Berg, Dr. Mandell, SugarMD, Huberman…</p>
+
+        <div class="thumb-preview-area" id="url-preview-area">
+          <div class="preview-wrap">
+            <img id="url-preview-img" src="" alt="Thumbnail"/>
+            <div class="preview-overlay"></div>
+            <div class="preview-badge" id="url-preview-badge">YouTube Thumbnail</div>
+            <button class="preview-reload" onclick="tryHq()">HD ↑</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- UPLOAD TAB -->
+      <div id="tab-content-upload" style="display:none">
+        <div class="drop-zone" id="single-drop">
+          <input type="file" id="single-file" accept="image/*" onchange="handleSingleFile(this)"/>
+          <div class="drop-icon">🖼️</div>
+          <div class="drop-text">Glisse le thumbnail ici ou clique</div>
+          <div class="drop-sub">PNG, JPG, WEBP — max 10MB</div>
+          <div class="drop-filename" id="single-filename"></div>
+          <img class="drop-preview" id="single-preview"/>
+        </div>
+      </div>
+
+      <!-- MULTI TAB -->
+      <div id="tab-content-multi" style="display:none">
+        <div style="background:rgba(212,168,67,0.05);border:1px solid rgba(212,168,67,0.15);border-radius:10px;padding:14px;margin-bottom:14px">
+          <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px">📦 Mode batch — jusqu'à 5 thumbnails</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.7">Colle plusieurs URLs YouTube — une par ligne.<br/>L'IA analysera chaque thumbnail et créera un prompt combiné qui fusionne les meilleurs éléments.</div>
+        </div>
+        <label>URLs YouTube (une par ligne)</label>
+        <textarea id="multi-urls" rows="5" placeholder="https://youtube.com/watch?v=abc&#10;https://youtube.com/watch?v=def&#10;https://youtube.com/watch?v=ghi"></textarea>
+        <button class="btn btn-gold" style="margin-top:10px;width:100%;justify-content:center" onclick="loadMultiUrls()">Charger les thumbnails</button>
+        <div id="multi-preview-grid" style="display:none;margin-top:14px;display:none">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Thumbnails chargés :</div>
+          <div id="multi-thumbs" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL 2: PERSONA -->
+  <div class="panel" id="panel-persona">
+    <div class="panel-head">
+      <span class="panel-title">👤 Ton avatar / persona</span>
+      <span style="font-size:11px;color:var(--muted)">Qui va remplacer le visage ?</span>
+    </div>
+    <div class="panel-body">
+      <div class="avatar-options">
+        <div class="avatar-opt selected" id="ao-photo" onclick="selectAvatar('photo')"><span class="ao-icon">📸</span>Ma photo</div>
+        <div class="avatar-opt" id="ao-heygen" onclick="selectAvatar('heygen')"><span class="ao-icon">🤖</span>Avatar HeyGen</div>
+        <div class="avatar-opt" id="ao-noface" onclick="selectAvatar('noface')"><span class="ao-icon">🎭</span>Sans visage</div>
+      </div>
+
+      <div id="persona-photo-section">
+        <label>Ta photo de référence</label>
+        <div class="persona-row">
+          <div class="persona-face-drop" id="face-drop">
+            <input type="file" id="face-file" accept="image/*" onchange="handleFaceFile(this)"/>
+            <img class="persona-face-preview" id="face-preview"/>
+            <div style="font-size:20px;margin-bottom:4px">👤</div>
+            <div style="font-size:12px;color:var(--muted)">Clique pour uploader<br/><span style="font-size:10px;color:var(--dim)">PNG/JPG min 512×512</span></div>
+            <div class="drop-filename" id="face-filename"></div>
+          </div>
+          <div>
+            <label>Genre du persona</label>
+            <div style="display:flex;gap:8px;margin-bottom:12px">
+              <button class="btn btn-ghost" id="g-man" onclick="setGender('man')" style="flex:1">👨 Homme</button>
+              <button class="btn btn-gold" id="g-woman" onclick="setGender('woman')" style="flex:1">👩 Femme</button>
+            </div>
+            <label>Description (optionnel)</label>
+            <input type="text" id="persona-desc" placeholder="Ex: médecin en blouse blanche, 45 ans, souriant"/>
+          </div>
+        </div>
+      </div>
+
+      <div id="persona-heygen-section" style="display:none">
+        <label>Description de ton avatar HeyGen</label>
+        <input type="text" id="heygen-desc" placeholder="Ex: Dr. David, avatar masculin professionnel en blouse blanche"/>
+        <p class="hint">L'avatar HeyGen sera décrit dans le prompt pour que Nano Banana le reconstitue</p>
+      </div>
+
+      <div id="persona-noface-section" style="display:none">
+        <div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:13px;color:var(--muted)">
+          Le thumbnail sera généré <strong style="color:var(--text)">sans visage humain</strong> — uniquement l'objet principal, le texte et les éléments graphiques.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL 3: NICHE & OPTIONS -->
+  <div class="panel" id="panel-options">
+    <div class="panel-head">
+      <span class="panel-title">⚙️ Options de clonage</span>
+    </div>
+    <div class="panel-body">
+      <label>Sous-niche (optionnel — améliore l'analyse)</label>
+      <div class="niche-pills" id="niche-pills">
+        <span class="niche-pill active" onclick="toggleNiche(this)">Senior Longevity</span>
+        <span class="niche-pill" onclick="toggleNiche(this)">Metabolic / Diabetes</span>
+        <span class="niche-pill" onclick="toggleNiche(this)">Brain / Cognitive</span>
+        <span class="niche-pill" onclick="toggleNiche(this)">Heart Health</span>
+        <span class="niche-pill" onclick="toggleNiche(this)">Hormone / Menopause</span>
+        <span class="niche-pill" onclick="toggleNiche(this)">Natural Remedies</span>
+        <span class="niche-pill" onclick="toggleNiche(this)">Sleep</span>
+        <span class="niche-pill" onclick="toggleNiche(this)">Fitness / Strength</span>
+        <span class="niche-pill" onclick="toggleNiche(this)">Finance</span>
+        <span class="niche-pill" onclick="toggleNiche(this)">Tech / AI</span>
+        <span class="niche-pill" onclick="toggleNiche(this)">Motivation</span>
+        <span class="niche-pill" onclick="toggleNiche(this)">Autre</span>
+      </div>
+      <div style="height:14px"></div>
+      <label>Ton sujet de vidéo (optionnel)</label>
+      <input type="text" id="video-topic" placeholder="Ex: les 7 aliments qui nettoient les artères après 60 ans"/>
+      <p class="hint">Si renseigné, le prompt sera adapté à ton contenu spécifique</p>
+    </div>
+  </div>
+
+  <!-- ANALYZE BUTTON -->
+  <button class="analyze-btn" id="analyze-btn" onclick="analyzeAndGenerate()">
+    <span>🔍</span> Analyser & Générer le prompt clone
+  </button>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="progress-steps">
+      <div class="prog-step" id="ps1"><div class="ps-icon">1</div><span>Chargement du thumbnail…</span></div>
+      <div class="prog-step" id="ps2"><div class="ps-icon">2</div><span>Analyse IA du design (couleurs, layout, texte)…</span></div>
+      <div class="prog-step" id="ps3"><div class="ps-icon">3</div><span>Extraction des éléments visuels…</span></div>
+      <div class="prog-step" id="ps4"><div class="ps-icon">4</div><span>Génération du prompt clone…</span></div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results-wrap" id="results-wrap">
+
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">🔬 Analyse du thumbnail original</span>
+        <span class="panel-title" style="color:var(--green);font-size:12px">✓ Analysé</span>
+      </div>
+      <div class="panel-body">
+        <div style="display:grid;grid-template-columns:200px 1fr;gap:16px;align-items:start">
+          <div>
+            <div style="border-radius:8px;overflow:hidden;border:1px solid var(--border)">
+              <img id="result-thumb-img" src="" style="width:100%;display:block"/>
+            </div>
+          </div>
+          <div>
+            <div class="analysis-grid">
+              <div class="analysis-chip"><div class="ac-label">Layout</div><div class="ac-value gold" id="an-layout">—</div></div>
+              <div class="analysis-chip"><div class="ac-label">Style CTR</div><div class="ac-value" id="an-style">—</div></div>
+              <div class="analysis-chip"><div class="ac-label">Texte principal</div><div class="ac-value" id="an-text">—</div></div>
+              <div class="analysis-chip"><div class="ac-label">Éléments clés</div><div class="ac-value" id="an-elements">—</div></div>
+            </div>
+            <div class="analysis-chip" style="margin-top:10px">
+              <div class="ac-label">Palette de couleurs</div>
+              <div class="color-row" id="an-colors"></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:14px" class="analysis-chip">
+          <div class="ac-label">Stratégie thumbnail</div>
+          <div class="ac-value" id="an-strategy" style="font-size:12px;line-height:1.6;color:var(--muted)">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">✨ Prompt clone généré</span>
+        <span style="font-size:11px;color:var(--muted)">Prêt pour arena.ai</span>
+      </div>
+      <div class="panel-body">
+        <div style="position:relative">
+          <div class="prompt-box" id="main-prompt"></div>
+          <button class="btn btn-gold" style="position:absolute;top:10px;right:10px;padding:6px 12px;font-size:11px" onclick="copyPrompt()">📋 Copier</button>
+        </div>
+
+        <div class="arena-section">
+          <div class="arena-info">
+            <strong>Étape suivante : arena.ai</strong>
+            Colle le prompt + attache ta photo de référence → Nano Banana Pro
+          </div>
+          <a href="https://arena.ai/image/direct" target="_blank" class="arena-link">Ouvrir arena.ai →</a>
+        </div>
+
+        <div class="action-row">
+          <button class="btn btn-ghost" onclick="generateVariants()">🎨 3 variantes de style</button>
+          <button class="btn btn-ghost" onclick="regenerate()">🔄 Regénérer</button>
+          <button class="btn btn-ghost" onclick="saveToHistory()">💾 Sauvegarder</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VARIANTS -->
+    <div class="variants-section" id="variants-section" style="display:none">
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">🎨 Variantes de style</span></div>
+        <div class="panel-body">
+          <div id="variants-list"></div>
+          <div class="action-row" style="margin-top:10px">
+            <button class="btn btn-gold" onclick="copyVariant()">📋 Copier variante sélectionnée</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- HISTORY -->
+  <div class="history-strip" id="history-strip" style="display:none">
+    <div class="history-title">Clones récents</div>
+    <div class="history-items" id="history-items"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──
+const S = {
+  activeTab: 'url',
+  avatarType: 'photo',
+  gender: 'woman',
+  selectedNiche: 'Senior Longevity',
+  currentThumbUrl: '',
+  currentThumbBase64: '',
+  currentPrompt: '',
+  selectedVariant: 0,
+  history: JSON.parse(localStorage.getItem('clone_history') || '[]'),
+  groqKey: localStorage.getItem('groq_key') || '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',
+};
+
+// ── TABS ──
+function switchTab(tab) {
+  S.activeTab = tab;
+  ['url','upload','multi'].forEach(t => {
+    document.getElementById('tab-content-'+t).style.display = t===tab ? 'block' : 'none';
+    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+  });
+}
+
+// ── AVATAR SELECT ──
+function selectAvatar(type) {
+  S.avatarType = type;
+  ['photo','heygen','noface'].forEach(t => document.getElementById('ao-'+t).classList.toggle('selected', t===type));
+  document.getElementById('persona-photo-section').style.display = type==='photo' ? 'block' : 'none';
+  document.getElementById('persona-heygen-section').style.display = type==='heygen' ? 'block' : 'none';
+  document.getElementById('persona-noface-section').style.display = type==='noface' ? 'block' : 'none';
+}
+
+function setGender(g) {
+  S.gender = g;
+  document.getElementById('g-man').className = 'btn '+(g==='man' ? 'btn-gold' : 'btn-ghost');
+  document.getElementById('g-woman').className = 'btn '+(g==='woman' ? 'btn-gold' : 'btn-ghost');
+}
+
+// ── NICHE ──
+function toggleNiche(el) {
+  document.querySelectorAll('.niche-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  S.selectedNiche = el.textContent;
+}
+
+// ── YOUTUBE URL ──
+function extractVidId(url) {
+  const patterns = [/youtu\.be\/([\w-]{11})/,/youtube\.com\/watch\?v=([\w-]{11})/,/youtube\.com\/shorts\/([\w-]{11})/,/v=([\w-]{11})/];
+  for(const p of patterns) { const m = url.match(p); if(m) return m[1]; }
+  return null;
+}
+
+function loadYtUrl() {
+  const url = document.getElementById('yt-url-input').value.trim();
+  if(!url) return toast('⚠️ Entre une URL YouTube', 'var(--gold)');
+  const id = extractVidId(url);
+  if(!id) return toast('⚠️ URL invalide', 'var(--gold)');
+  const imgUrl = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+  S.currentThumbUrl = imgUrl;
+  const img = document.getElementById('url-preview-img');
+  img.src = imgUrl;
+  img.onerror = () => { img.src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`; S.currentThumbUrl = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`; };
+  document.getElementById('url-preview-area').classList.add('show');
+  document.getElementById('url-preview-badge').textContent = `ID: ${id}`;
+  setStep(2);
+  toast('✅ Thumbnail chargé !');
+}
+
+function tryHq() {
+  const url = document.getElementById('yt-url-input').value.trim();
+  const id = extractVidId(url);
+  if(!id) return;
+  const img = document.getElementById('url-preview-img');
+  img.src = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+}
+
+// ── FILE UPLOADS ──
+function handleSingleFile(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    S.currentThumbBase64 = e.target.result;
+    const prev = document.getElementById('single-preview');
+    prev.src = e.target.result; prev.style.display='block';
+    document.getElementById('single-filename').textContent = file.name;
+    document.getElementById('single-drop').classList.add('filled');
+    setStep(2); toast('✅ Image chargée !');
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleFaceFile(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prev = document.getElementById('face-preview');
+    prev.src = e.target.result; prev.style.display='block';
+    document.getElementById('face-filename').textContent = file.name;
+    document.getElementById('face-drop').classList.add('filled');
+    toast('✅ Photo uploadée !');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── DRAG & DROP ──
+const dropZone = document.getElementById('single-drop');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if(file && file.type.startsWith('image/')) { const dt = new DataTransfer(); dt.items.add(file); document.getElementById('single-file').files = dt.files; handleSingleFile(document.getElementById('single-file')); }
+});
+
+// ── MULTI URLS ──
+function loadMultiUrls() {
+  const urls = document.getElementById('multi-urls').value.trim().split('\n').filter(u => u.trim()).slice(0,5);
+  if(!urls.length) return toast('⚠️ Entre au moins une URL', 'var(--gold)');
+  const container = document.getElementById('multi-thumbs');
+  container.innerHTML = '';
+  let loaded = 0;
+  urls.forEach(url => {
+    const id = extractVidId(url.trim());
+    if(!id) return;
+    const img = document.createElement('img');
+    img.src = `https://i.ytimg.com/vi/${id}/mqdefault.jpg`;
+    img.style.cssText = 'width:120px;height:67px;object-fit:cover;border-radius:6px;border:1px solid var(--border)';
+    img.onerror = () => img.style.display='none';
+    img.onload = () => { loaded++; if(loaded===1) S.currentThumbUrl = img.src; };
+    container.appendChild(img);
+  });
+  document.getElementById('multi-preview-grid').style.display = 'block';
+  setStep(2);
+  toast(`✅ ${urls.length} URLs chargées`);
+}
+
+// ── STEPS ──
+function setStep(n) {
+  for(let i=1;i<=4;i++) {
+    const s = document.getElementById('step'+i);
+    s.classList.toggle('active', i===n);
+    s.classList.toggle('done', i<n);
+  }
+}
+
+// ── GROQ CALL ──
+async function callGroq(prompt, maxTokens=2000) {
+  const key = localStorage.getItem('groq_key') || S.groqKey;
+  if(!key) throw new Error('Clé Groq manquante — configure dans Kalse Studio');
+  const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+    body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:[{role:'user',content:prompt}],temperature:0.7,max_tokens:maxTokens})
+  });
+  const d = await r.json();
+  if(d.error) throw new Error(d.error.message);
+  return d.choices?.[0]?.message?.content || '';
+}
+
+// ── PROGRESS ANIMATION ──
+let progressTimer = null;
+function startProgress() {
+  const steps = ['ps1','ps2','ps3','ps4'];
+  const fill = document.getElementById('progress-fill');
+  let idx = 0;
+  steps.forEach(s => { const el=document.getElementById(s); el.classList.remove('active','done'); });
+  fill.style.width = '0%';
+  function next() {
+    if(idx > 0) document.getElementById(steps[idx-1]).classList.replace('active','done');
+    if(idx < steps.length) {
+      document.getElementById(steps[idx]).classList.add('active');
+      fill.style.width = ((idx+1)/steps.length*90)+'%';
+      idx++;
+      progressTimer = setTimeout(next, 2500 + Math.random()*1000);
+    }
+  }
+  next();
+}
+function finishProgress() {
+  if(progressTimer) clearTimeout(progressTimer);
+  document.querySelectorAll('.prog-step').forEach(s => { s.classList.remove('active'); s.classList.add('done'); });
+  document.getElementById('progress-fill').style.width = '100%';
+}
+
+// ── MAIN ANALYZE ──
+async function analyzeAndGenerate() {
+  const thumbUrl = S.currentThumbUrl || S.currentThumbBase64;
+  if(!thumbUrl) return toast('⚠️ Charge un thumbnail d\'abord (URL ou image)', 'var(--gold)');
+
+  const btn = document.getElementById('analyze-btn');
+  btn.disabled = true;
+  document.getElementById('progress-wrap').classList.add('show');
+  document.getElementById('results-wrap').classList.remove('show');
+  document.getElementById('variants-section').style.display = 'none';
+  setStep(3);
+  startProgress();
+
+  try {
+    const niche = S.selectedNiche;
+    const topic = document.getElementById('video-topic').value.trim();
+    const avatarType = S.avatarType;
+    const gender = S.gender;
+    const personaDesc = document.getElementById('persona-desc')?.value.trim() || '';
+    const heygenDesc = document.getElementById('heygen-desc')?.value.trim() || '';
+    const isMulti = S.activeTab === 'multi';
+    const multiUrls = isMulti ? document.getElementById('multi-urls').value.trim().split('\n').filter(u=>u.trim()).slice(0,5) : [];
+
+    // Build thumbnail context
+    let thumbContext = '';
+    if(S.activeTab === 'url') {
+      thumbContext = `URL du thumbnail analysé: ${thumbUrl}\nCe thumbnail provient d'une vidéo YouTube dans la niche "${niche}".`;
+    } else if(S.activeTab === 'upload') {
+      thumbContext = `L'utilisateur a uploadé un thumbnail personnalisé dans la niche "${niche}".`;
+    } else {
+      thumbContext = `L'utilisateur a fourni ${multiUrls.length} URLs de thumbnails à fusionner: ${multiUrls.join(', ')}. Niche: ${niche}.`;
+    }
+
+    // PERSONA CONTEXT
+    let personaContext = '';
+    if(avatarType === 'photo') {
+      personaContext = `Le visage original du thumbnail doit être REMPLACÉ par ${gender==='man'?'un homme':'une femme'} fourni(e) via une photo de référence.${personaDesc ? ' Description: '+personaDesc+'.' : ''} TOUJOURS utiliser "the ${gender} in the attached face reference" pour référencer le visage.`;
+    } else if(avatarType === 'heygen') {
+      personaContext = `Le visage doit être remplacé par un avatar HeyGen. ${heygenDesc || 'Avatar professionnel médical en blouse blanche.'} Décris l'avatar de façon très précise pour que le modèle le reproduise fidèlement.`;
+    } else {
+      personaContext = `Ce thumbnail n'a PAS de visage humain visible. Focus sur l'objet central, les couleurs et le texte.`;
+    }
+
+    // Prompt for analysis
+    const analysisPrompt = `Tu es un expert en analyse de thumbnails YouTube haute performance pour la niche santé.
+
+${thumbContext}
+${topic ? 'Sujet de la vidéo de l\'utilisateur: "'+topic+'"' : ''}
+
+ANALYSE CE THUMBNAIL et génère:
+
+1. ANALYSE STRUCTURÉE (JSON):
+Réponds d'abord avec un bloc JSON STRICT (sans backticks):
+{
+  "layout": "description du layout en 5 mots (ex: Face droite, texte gauche, objet centre)",
+  "style": "type CTR (ex: Urgence médicale, Révélation choc, Liste fascinante)",
+  "main_text": "texte principal visible ou supposé sur le thumbnail",
+  "elements": ["élément1", "élément2", "élément3", "élément4"],
+  "colors": ["#hex1", "#hex2", "#hex3", "#hex4"],
+  "bg_gradient": "description précise du fond (ex: gradient bleu foncé vertical)",
+  "strategy": "explication en 2 phrases de pourquoi ce thumbnail est efficace et ce qui booste le CTR"
+}
+
+2. PROMPT DE CLONAGE COMPLET:
+Ensuite, génère un prompt détaillé de 300-400 mots pour recréer ce thumbnail avec Nano Banana Pro (arena.ai).
+Le prompt doit:
+- Spécifier exactement le format: YouTube thumbnail, 16:9, 1920x1080
+- Décrire précisément le fond/background
+- ${avatarType !== 'noface' ? personaContext : 'Décrire uniquement les éléments graphiques sans visage humain'}
+- Décrire le texte (position, couleurs, style typographique, taille)
+- Décrire l'objet ou élément central
+- Décrire tous les accents visuels (flèches, badges, cercles, triangles)
+- Mentionner: doit être lisible à 320x180px
+- Terminer par: NO watermarks, NO logos, NO brand names${avatarType !== 'noface' ? ', NO faces other than the attached reference' : ''}
+
+${isMulti ? 'IMPORTANT: Fusionne les éléments les plus percutants des différents thumbnails pour créer un prompt optimal.' : ''}`;
+
+    const result = await callGroq(analysisPrompt, 2000);
+
+    // Parse JSON part
+    let analysis = {};
+    try {
+      const jsonMatch = result.match(/\{[\s\S]*?\}/);
+      if(jsonMatch) analysis = JSON.parse(jsonMatch[0]);
+    } catch(e) { console.log('JSON parse issue, using defaults'); }
+
+    // Extract prompt (after JSON block)
+    const promptPart = result.replace(/\{[\s\S]*?\}/, '').trim();
+
+    finishProgress();
+
+    // Fill in analysis display
+    document.getElementById('an-layout').textContent = analysis.layout || 'Face droite, texte gauche';
+    document.getElementById('an-style').textContent = analysis.style || 'Urgence médicale';
+    document.getElementById('an-text').textContent = analysis.main_text || '—';
+    document.getElementById('an-elements').textContent = (analysis.elements || []).join(', ') || '—';
+    document.getElementById('an-strategy').textContent = analysis.strategy || '—';
+
+    // Colors
+    const colorsEl = document.getElementById('an-colors');
+    colorsEl.innerHTML = '';
+    (analysis.colors || ['#1a3a6b','#e63f2e','#f5c518','#ffffff','#0f0f0f']).forEach(c => {
+      const sw = document.createElement('div');
+      sw.className = 'color-swatch';
+      sw.style.background = c;
+      sw.setAttribute('data-color', c);
+      sw.title = c;
+      colorsEl.appendChild(sw);
+    });
+
+    // Set thumbnail in result
+    const resultImg = document.getElementById('result-thumb-img');
+    if(S.currentThumbBase64) resultImg.src = S.currentThumbBase64;
+    else if(S.currentThumbUrl) resultImg.src = S.currentThumbUrl;
+
+    // Set prompt
+    S.currentPrompt = promptPart || generateFallbackPrompt(analysis, personaContext, avatarType, gender);
+    document.getElementById('main-prompt').textContent = S.currentPrompt;
+
+    // Show results
+    document.getElementById('progress-wrap').classList.remove('show');
+    document.getElementById('results-wrap').classList.add('show');
+    setStep(4);
+    toast('✅ Analyse complète !');
+
+    // Scroll to results
+    setTimeout(() => document.getElementById('results-wrap').scrollIntoView({behavior:'smooth',block:'start'}), 200);
+
+  } catch(e) {
+    document.getElementById('progress-wrap').classList.remove('show');
+    toast('❌ Erreur: ' + e.message, 'var(--red)');
+  }
+
+  btn.disabled = false;
+}
+
+function generateFallbackPrompt(analysis, personaContext, avatarType, gender) {
+  return `YouTube thumbnail, 16:9, 1920x1080, HIGH CONTRAST CLICK-BAIT STYLE.
+
+Background: ${analysis.bg_gradient || 'smooth vertical blue gradient (light sky blue at top, darker saturated blue at bottom)'}. Clean, no noise, no texture.
+
+${avatarType !== 'noface' ? `RIGHT SIDE: photorealistic portrait of ${gender === 'man' ? 'the man' : 'the woman'} in the attached face reference — match his/her face, hair, outfit, and warm confident expression EXACTLY. 3/4 angle or front-facing, clean cutout with subtle drop shadow. Do not invent a different person. CLOSE-UP portrait, head and shoulders fills the right third of the frame.` : 'No human face in this thumbnail.'}
+
+LEFT SIDE: huge bold sans-serif text, ALL CAPS, extreme weight (900). Primary words in WHITE, key words in BRIGHT YELLOW. Heavy black outline (~6px), soft drop shadow, readable at 320x180.
+- Top-left: RED BANNER with short hook text
+- Main headline below: white then yellow key words stacked
+
+CENTER: ${analysis.elements ? analysis.elements.slice(0,2).join(' and ') : 'photorealistic close-up of main subject relevant to the health topic'}. Highly detailed, well-lit, centered in frame.
+
+Accents: red curved arrows pointing at the key element, small yellow warning triangle in upper area, red highlight circles. HIGH SATURATION, tight negative space, punchy colors.
+
+Must read clearly at 320x180 on a phone screen.
+
+NO watermarks, NO logos, NO brand names${avatarType !== 'noface' ? ', NO faces other than the attached reference' : ''}.`;
+}
+
+// ── COPY ──
+function copyPrompt() {
+  navigator.clipboard.writeText(S.currentPrompt).then(() => toast('✅ Prompt copié !'));
+}
+
+// ── VARIANTS ──
+async function generateVariants() {
+  if(!S.currentPrompt) return;
+  const btn = document.querySelector('[onclick="generateVariants()"]');
+  btn.disabled = true; btn.textContent = '⏳ Génération…';
+  try {
+    const varPrompt = `À partir de ce prompt de thumbnail YouTube:
+"${S.currentPrompt.substring(0,500)}..."
+
+Génère 3 variantes créatives avec des styles différents:
+1. VERSION CHOC (fond rouge dramatique, urgence maximale)
+2. VERSION PREMIUM (fond sombre élégant, texte doré, style médical)
+3. VERSION ÉNIGME (fond mystérieux sombre, texte blanc, curiosity gap maximal)
+
+Pour chaque variante, donne:
+- NOM DU STYLE (en majuscules)
+- DESCRIPTION EN 1 LIGNE du concept visuel
+- PROMPT COMPLET (~150 mots)
+
+Sépare chaque variante avec "---"`;
+
+    const result = await callGroq(varPrompt, 1500);
+    const parts = result.split('---').filter(p => p.trim());
+
+    const variantNames = ['🔴 VERSION CHOC', '⭐ VERSION PREMIUM', '🌑 VERSION ÉNIGME'];
+    const variantDescs = ['Fond rouge dramatique, urgence maximale', 'Style élégant médical, texte doré', 'Mystérieux, curiosity gap maximal'];
+
+    const list = document.getElementById('variants-list');
+    list.innerHTML = '';
+    parts.forEach((part, i) => {
+      const div = document.createElement('div');
+      div.className = 'variant-card' + (i===0?' selected':'');
+      div.onclick = () => { document.querySelectorAll('.variant-card').forEach(c=>c.classList.remove('selected')); div.classList.add('selected'); S.selectedVariant = i; };
+      div.innerHTML = `<div class="variant-style">${variantNames[i]||'VARIANTE '+(i+1)}</div><div class="variant-desc">${variantDescs[i]||''}</div><div style="margin-top:8px;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;line-height:1.6;max-height:80px;overflow:hidden">${part.substring(0,300)}…</div>`;
+      div.setAttribute('data-prompt', part.trim());
+      list.appendChild(div);
+    });
+
+    document.getElementById('variants-section').style.display = 'block';
+    document.getElementById('variants-section').scrollIntoView({behavior:'smooth'});
+    toast('✅ 3 variantes générées !');
+  } catch(e) { toast('❌ '+e.message, 'var(--red)'); }
+  btn.disabled = false; btn.textContent = '🎨 3 variantes de style';
+}
+
+function copyVariant() {
+  const selected = document.querySelector('.variant-card.selected');
+  if(!selected) return toast('⚠️ Sélectionne une variante', 'var(--gold)');
+  navigator.clipboard.writeText(selected.getAttribute('data-prompt')).then(() => toast('✅ Variante copiée !'));
+}
+
+// ── REGENERATE ──
+function regenerate() { analyzeAndGenerate(); }
+
+// ── HISTORY ──
+function saveToHistory() {
+  const entry = {
+    id: Date.now(),
+    thumbUrl: S.currentThumbUrl || '',
+    prompt: S.currentPrompt,
+    niche: S.selectedNiche,
+    date: new Date().toLocaleDateString('fr'),
+  };
+  S.history.unshift(entry);
+  if(S.history.length > 10) S.history = S.history.slice(0,10);
+  localStorage.setItem('clone_history', JSON.stringify(S.history));
+  renderHistory();
+  toast('✅ Sauvegardé !');
+}
+
+function renderHistory() {
+  const strip = document.getElementById('history-strip');
+  const items = document.getElementById('history-items');
+  if(!S.history.length) { strip.style.display='none'; return; }
+  strip.style.display = 'block';
+  items.innerHTML = S.history.map(h => `
+    <div class="hist-card" onclick="loadHistoryItem(${h.id})">
+      ${h.thumbUrl ? `<img class="hist-thumb" src="${h.thumbUrl}" onerror="this.style.background='var(--dim)'"/>` : '<div class="hist-thumb" style="display:grid;place-items:center;font-size:20px">🖼️</div>'}
+      <div class="hist-label">${h.niche} · ${h.date}</div>
+    </div>`).join('');
+}
+
+function loadHistoryItem(id) {
+  const item = S.history.find(h => h.id===id);
+  if(!item) return;
+  S.currentPrompt = item.prompt;
+  S.currentThumbUrl = item.thumbUrl;
+  document.getElementById('main-prompt').textContent = item.prompt;
+  if(item.thumbUrl) document.getElementById('result-thumb-img').src = item.thumbUrl;
+  document.getElementById('results-wrap').classList.add('show');
+  document.getElementById('results-wrap').scrollIntoView({behavior:'smooth'});
+  toast('📂 Clone chargé');
+}
+
+// ── TOAST ──
+function toast(msg, col='var(--green)') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.color = col;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── INIT ──
+renderHistory();
+</script>
+</body>
+</html>
