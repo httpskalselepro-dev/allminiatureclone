@@ -9,969 +9,992 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#05060d;
-  --s1:#0a0c18;
-  --s2:#0f1220;
-  --s3:#161928;
-  --border:#1a1d2e;
-  --border2:#252840;
-  --gold:#d4a843;
-  --gold2:#f0c96a;
-  --red:#e63f2e;
-  --blue:#3b82f6;
-  --green:#22c55e;
-  --purple:#a855f7;
-  --cyan:#06b6d4;
-  --text:#edeef5;
-  --muted:#5c6080;
-  --dim:#1e2038;
-  --r:14px;
+  --bg:#05060d;--s1:#0a0c18;--s2:#0f1220;--s3:#161928;
+  --border:#1a1d2e;--border2:#252840;
+  --gold:#d4a843;--gold2:#f0c96a;--red:#e63f2e;
+  --blue:#3b82f6;--green:#22c55e;--purple:#a855f7;--cyan:#06b6d4;
+  --text:#edeef5;--muted:#5c6080;--dim:#1e2038;--r:12px;
 }
-
 html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6}
-
-/* ── AMBIENT BG ── */
 .ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.amb-blob{position:absolute;border-radius:50%;filter:blur(120px);opacity:0.06;animation:ambdrift 25s ease-in-out infinite}
-.ab1{width:600px;height:600px;background:radial-gradient(var(--gold),transparent);top:-200px;left:-100px;animation-delay:0s}
-.ab2{width:500px;height:500px;background:radial-gradient(var(--purple),transparent);bottom:-150px;right:-100px;animation-delay:-10s}
-.ab3{width:350px;height:350px;background:radial-gradient(var(--cyan),transparent);top:50%;left:50%;animation-delay:-18s}
-@keyframes ambdrift{0%,100%{transform:translate(0,0) scale(1)}40%{transform:translate(40px,-30px) scale(1.08)}70%{transform:translate(-25px,40px) scale(0.94)}}
+.ab{position:absolute;border-radius:50%;filter:blur(100px);opacity:0.07;animation:adrift 22s ease-in-out infinite}
+.ab1{width:500px;height:500px;background:var(--gold);top:-150px;left:-100px}
+.ab2{width:400px;height:400px;background:var(--purple);bottom:-100px;right:-80px;animation-delay:-9s}
+.ab3{width:300px;height:300px;background:var(--cyan);top:50%;left:45%;animation-delay:-16s}
+@keyframes adrift{0%,100%{transform:translate(0,0)}40%{transform:translate(35px,-25px)}70%{transform:translate(-20px,35px)}}
+.wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 18px 80px}
 
-/* ── LAYOUT ── */
-.wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 20px 60px}
+/* HEADER */
+.header{padding:22px 0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);margin-bottom:28px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:10px;display:grid;place-items:center;font-size:17px;box-shadow:0 4px 18px rgba(212,168,67,0.3)}
+.brand-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;background:linear-gradient(135deg,var(--gold),var(--gold2),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.brand-sub{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.btn-back{color:var(--muted);text-decoration:none;font-size:12px;font-weight:600;border:1px solid var(--border);padding:6px 14px;border-radius:20px;transition:all .2s}
+.btn-back:hover{color:var(--text);border-color:var(--border2)}
 
-/* ── HEADER ── */
-.header{padding:28px 0 32px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
-.brand{display:flex;align-items:center;gap:12px}
-.brand-logo{width:40px;height:40px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:10px;display:grid;place-items:center;font-size:18px;flex-shrink:0;box-shadow:0 4px 20px rgba(212,168,67,0.3)}
-.brand-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--gold),var(--gold2),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.brand-sub{font-size:11px;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase}
-.header-back{color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px;transition:color 0.2s;border:1px solid var(--border);padding:7px 14px;border-radius:20px}
-.header-back:hover{color:var(--text);border-color:var(--border2)}
+/* GUIDE TOGGLE */
+.guide-toggle{background:rgba(212,168,67,0.06);border:1px solid rgba(212,168,67,0.18);border-radius:var(--r);padding:14px 18px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;transition:all .2s}
+.guide-toggle:hover{background:rgba(212,168,67,0.1)}
+.guide-toggle-left{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--gold)}
+.guide-arrow{color:var(--gold);font-size:12px;transition:transform .3s}
+.guide-arrow.open{transform:rotate(180deg)}
+.guide-content{display:none;background:rgba(10,12,24,0.8);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px;backdrop-filter:blur(10px)}
+.guide-content.show{display:block;animation:fadeup .3s ease}
+.guide-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
+@media(max-width:550px){.guide-grid{grid-template-columns:1fr}}
+.guide-step{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:14px}
+.gs-num{width:26px;height:26px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;color:#000;margin-bottom:8px}
+.gs-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.gs-desc{font-size:12px;color:var(--muted);line-height:1.6}
+.guide-tip{background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--muted);line-height:1.7}
+.guide-tip strong{color:var(--green)}
 
-/* ── HERO ── */
-.hero{padding:40px 0 28px;text-align:center}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(212,168,67,0.08);border:1px solid rgba(212,168,67,0.2);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:20px}
-.hero h1{font-family:'Syne',sans-serif;font-size:clamp(28px,6vw,48px);font-weight:800;letter-spacing:-1.5px;line-height:1.1;margin-bottom:14px}
-.hero h1 span{background:linear-gradient(135deg,var(--gold),var(--gold2),var(--red));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{font-size:15px;color:var(--muted);max-width:520px;margin:0 auto}
-
-/* ── STEP INDICATOR ── */
-.steps{display:flex;align-items:center;justify-content:center;gap:0;margin:28px 0;flex-wrap:wrap;row-gap:10px}
-.step{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--muted);transition:color 0.3s}
-.step.active{color:var(--gold)}
-.step.done{color:var(--green)}
-.step-num{width:26px;height:26px;border-radius:50%;border:2px solid currentColor;display:grid;place-items:center;font-size:11px;font-weight:700;flex-shrink:0;transition:all 0.3s}
-.step.active .step-num{background:var(--gold);border-color:var(--gold);color:#000}
-.step.done .step-num{background:var(--green);border-color:var(--green);color:#000}
-.step-line{width:40px;height:1px;background:var(--dim);margin:0 4px}
-@media(max-width:500px){.step-line{width:20px}.steps{gap:0}}
-
-/* ── SECTION PANEL ── */
-.panel{background:rgba(10,12,24,0.8);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:var(--r);margin-bottom:16px;overflow:hidden;transition:border-color 0.3s}
+/* PANELS */
+.panel{background:rgba(10,12,24,0.8);backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:var(--r);margin-bottom:14px;overflow:hidden;transition:border-color .2s}
 .panel:hover{border-color:var(--border2)}
-.panel-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .panel-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700}
-.panel-body{padding:20px}
+.panel-body{padding:18px}
 
-/* ── INPUT METHODS ── */
-.method-tabs{display:flex;gap:6px;margin-bottom:18px;background:var(--s2);border-radius:10px;padding:4px}
-.method-tab{flex:1;padding:8px;border:none;background:none;border-radius:8px;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
-.method-tab.active{background:var(--s3);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+/* FORMS */
+label,.lbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:6px}
+input[type=text],input[type=url],textarea,select{width:100%;background:rgba(15,18,32,0.9);border:1px solid var(--border);border-radius:9px;padding:10px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:all .2s;-webkit-appearance:none;appearance:none;resize:vertical}
+input:focus,textarea:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,168,67,0.08)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235c6080' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+select option{background:#0f1220}
+.hint{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}
+.field{margin-bottom:14px}.field:last-child{margin-bottom:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:550px){.grid2{grid-template-columns:1fr}}
+.divider{height:1px;background:var(--border);margin:16px 0}
+.row{display:flex;gap:9px}
+.row input{flex:1;min-width:0}
 
-/* ── URL INPUT ── */
-.url-input-row{display:flex;gap:10px}
-.url-input-row input{flex:1;min-width:0}
-input[type=text],input[type=url],textarea{width:100%;background:rgba(15,18,32,0.9);border:1px solid var(--border);border-radius:10px;padding:11px 16px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:all 0.2s;-webkit-appearance:none;appearance:none}
-input:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,168,67,0.08)}
-textarea{resize:vertical;min-height:80px}
-.hint{font-size:11px;color:var(--muted);margin-top:5px}
-label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.7px;color:var(--muted);margin-bottom:6px}
+/* TABS */
+.tabs{display:flex;gap:5px;background:var(--s2);border-radius:10px;padding:4px;margin-bottom:16px}
+.tab{flex:1;padding:8px 6px;border:none;background:none;border-radius:7px;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.tab.active{background:var(--s3);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.3)}
 
-/* ── THUMBNAIL PREVIEW ── */
-.thumb-preview-area{display:none;margin-top:16px}
-.thumb-preview-area.show{display:block}
-.preview-wrap{position:relative;border-radius:10px;overflow:hidden;background:var(--s3);aspect-ratio:16/9;max-height:300px;border:1px solid var(--border2)}
-.preview-wrap img{width:100%;height:100%;object-fit:cover;display:block}
-.preview-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 50%);pointer-events:none}
-.preview-badge{position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 10px;font-size:11px;color:#fff;font-weight:600}
-.preview-reload{position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:5px 10px;font-size:11px;color:#fff;cursor:pointer;backdrop-filter:blur(8px);transition:all 0.2s}
-.preview-reload:hover{background:rgba(212,168,67,0.3);border-color:var(--gold)}
-
-/* ── UPLOAD DROP ── */
-.drop-zone{border:2px dashed var(--border);border-radius:10px;padding:30px 20px;text-align:center;cursor:pointer;position:relative;transition:all 0.2s;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+/* UPLOAD */
+.drop-zone{border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;position:relative;transition:all .2s;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
 .drop-zone:hover,.drop-zone.drag{border-color:var(--gold);background:rgba(212,168,67,0.03)}
-.drop-zone.filled{border-style:solid;border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.04)}
+.drop-zone.filled{border-style:solid;border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.04)}
 .drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
-.drop-icon{font-size:28px;opacity:0.7}
-.drop-text{font-size:13px;color:var(--muted)}
-.drop-sub{font-size:11px;color:var(--dim)}
-.drop-filename{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--green);margin-top:4px}
-.drop-preview{width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-top:10px;display:none}
+.drop-icon{font-size:26px;opacity:.7}
+.drop-txt{font-size:12px;color:var(--muted)}
+.drop-sub{font-size:10px;color:var(--dim)}
+.file-name{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--green);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.drop-preview{width:100%;max-height:160px;object-fit:cover;border-radius:8px;margin-top:10px;display:none}
 
-/* ── AVATAR OPTIONS ── */
-.avatar-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-@media(max-width:500px){.avatar-options{grid-template-columns:1fr 1fr}}
-.avatar-opt{background:var(--s2);border:2px solid var(--border);border-radius:10px;padding:12px 10px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:12px;color:var(--muted);font-weight:500}
-.avatar-opt:hover{border-color:var(--gold);color:var(--text)}
-.avatar-opt.selected{border-color:var(--gold);background:rgba(212,168,67,0.08);color:var(--gold)}
-.avatar-opt .ao-icon{font-size:22px;margin-bottom:5px;display:block}
+/* THUMB PREVIEW */
+.thumb-preview{display:none;margin-top:14px}
+.thumb-preview.show{display:block}
+.prev-wrap{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:16/9;background:var(--s3);border:1px solid var(--border2);max-height:260px}
+.prev-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.prev-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 50%);pointer-events:none}
+.prev-badge{position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.1);border-radius:5px;padding:3px 9px;font-size:10px;color:#fff;font-weight:600}
+.prev-hd{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:4px 9px;font-size:10px;color:#fff;cursor:pointer;backdrop-filter:blur(6px);transition:all .2s}
+.prev-hd:hover{background:rgba(212,168,67,.3);border-color:var(--gold)}
 
-/* ── PERSONA UPLOAD ── */
-.persona-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:500px){.persona-row{grid-template-columns:1fr}}
-.persona-face-drop{border:2px dashed var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;position:relative;transition:all 0.2s}
-.persona-face-drop:hover{border-color:var(--gold)}
-.persona-face-drop.filled{border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.04)}
-.persona-face-drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
-.persona-face-preview{width:60px;height:60px;border-radius:50%;object-fit:cover;margin:0 auto 6px;display:none}
+/* PERSONA */
+.avatar-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.ao{background:var(--s2);border:2px solid var(--border);border-radius:10px;padding:11px 8px;text-align:center;cursor:pointer;transition:all .2s;font-size:12px;color:var(--muted);font-weight:500}
+.ao:hover{border-color:rgba(212,168,67,.4);color:var(--text)}
+.ao.sel{border-color:var(--gold);background:rgba(212,168,67,.08);color:var(--gold)}
+.ao .ao-ic{font-size:20px;display:block;margin-bottom:4px}
+.face-drop{border:2px dashed var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer;position:relative;transition:all .2s}
+.face-drop:hover{border-color:var(--gold)}
+.face-drop.filled{border-color:rgba(34,197,94,.4)}
+.face-drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.face-prev{width:56px;height:56px;border-radius:50%;object-fit:cover;margin:0 auto 6px;display:none;border:2px solid var(--gold)}
+.gender-row{display:flex;gap:8px;margin-bottom:12px}
 
-/* ── NICHE PILLS ── */
-.niche-pills{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:4px}
-.niche-pill{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--muted);background:var(--s2);transition:all 0.2s;white-space:nowrap}
-.niche-pill:hover,.niche-pill.active{background:rgba(212,168,67,0.1);border-color:rgba(212,168,67,0.3);color:var(--gold)}
+/* NICHE PILLS */
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--muted);background:var(--s2);transition:all .2s;white-space:nowrap}
+.pill:hover,.pill.on{background:rgba(212,168,67,.1);border-color:rgba(212,168,67,.3);color:var(--gold)}
 
-/* ── ANALYZE BUTTON ── */
-.analyze-btn{width:100%;padding:16px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0a0700;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:-0.3px;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden}
-.analyze-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent,rgba(255,255,255,0.15));opacity:0;transition:opacity 0.2s}
-.analyze-btn:hover::before{opacity:1}
-.analyze-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(212,168,67,0.4)}
-.analyze-btn:active{transform:translateY(0)}
-.analyze-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+/* MAIN BTN */
+.main-btn{width:100%;padding:16px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0a0700;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:-.3px;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:6px}
+.main-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(212,168,67,.4)}
+.main-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
 
-/* ── PROGRESS BAR ── */
-.progress-wrap{display:none;margin-top:16px}
-.progress-wrap.show{display:block}
-.progress-bar{height:3px;background:var(--dim);border-radius:3px;overflow:hidden;margin-bottom:10px}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:3px;width:0%;transition:width 0.5s ease;animation:shimmer 1.5s ease infinite}
-@keyframes shimmer{0%{opacity:1}50%{opacity:0.7}100%{opacity:1}}
-.progress-steps{display:flex;flex-direction:column;gap:6px}
-.prog-step{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);transition:color 0.3s}
-.prog-step.active{color:var(--text)}
-.prog-step.done{color:var(--green)}
-.prog-step .ps-icon{width:16px;height:16px;border-radius:50%;border:2px solid currentColor;display:grid;place-items:center;font-size:8px;flex-shrink:0;transition:all 0.3s}
-.prog-step.done .ps-icon{background:var(--green);border-color:var(--green)}
-.prog-step.active .ps-icon{border-color:var(--gold);animation:pulse 1s ease infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(212,168,67,0.4)}50%{box-shadow:0 0 0 6px rgba(212,168,67,0)}}
+/* PROGRESS */
+.prog-wrap{display:none;margin-top:14px;background:rgba(10,12,24,.8);border:1px solid var(--border);border-radius:var(--r);padding:16px}
+.prog-wrap.show{display:block;animation:fadeup .3s ease}
+.prog-bar{height:3px;background:var(--dim);border-radius:3px;overflow:hidden;margin-bottom:14px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));width:0%;transition:width .6s ease;border-radius:3px}
+.prog-items{display:flex;flex-direction:column;gap:7px}
+.pi{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--muted);transition:color .3s}
+.pi.act{color:var(--text)}.pi.done{color:var(--green)}
+.pi-dot{width:8px;height:8px;border-radius:50%;background:var(--dim);flex-shrink:0;transition:all .3s}
+.pi.act .pi-dot{background:var(--gold);box-shadow:0 0 8px rgba(212,168,67,.5);animation:blink 1s ease infinite}
+.pi.done .pi-dot{background:var(--green)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
 
-/* ── RESULTS ── */
-.results-wrap{display:none}
-.results-wrap.show{display:block;animation:fadeup 0.4s ease}
-@keyframes fadeup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+/* RESULTS */
+.results{display:none}
+.results.show{display:block;animation:fadeup .4s ease}
+@keyframes fadeup{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── ANALYSIS DISPLAY ── */
-.analysis-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
-@media(max-width:500px){.analysis-grid{grid-template-columns:1fr}}
-.analysis-chip{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
-.ac-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--muted);margin-bottom:5px}
-.ac-value{font-size:13px;color:var(--text);line-height:1.5}
-.ac-value.gold{color:var(--gold);font-weight:600}
+/* ANALYSIS CHIPS */
+.an-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+@media(max-width:500px){.an-grid{grid-template-columns:1fr}}
+.an-chip{background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:11px 13px}
+.an-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:4px}
+.an-val{font-size:13px;color:var(--text);line-height:1.5}
+.an-val.gold{color:var(--gold);font-weight:600}
+.colors-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.cswatch{width:26px;height:26px;border-radius:5px;border:1px solid rgba(255,255,255,.1);cursor:pointer;transition:transform .2s;flex-shrink:0}
+.cswatch:hover{transform:scale(1.25)}
 
-/* ── COLOR PALETTE ── */
-.color-row{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
-.color-swatch{width:28px;height:28px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);position:relative;cursor:pointer;transition:transform 0.2s;flex-shrink:0}
-.color-swatch:hover{transform:scale(1.2)}
-.color-swatch::after{content:attr(data-color);position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--muted);white-space:nowrap;opacity:0;transition:opacity 0.2s}
-.color-swatch:hover::after{opacity:1}
+/* PROMPT */
+.prompt-box{background:rgba(5,6,13,.95);border:1px solid var(--border);border-radius:10px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.9;color:var(--text);white-space:pre-wrap;word-break:break-word;min-height:140px;position:relative;max-height:400px;overflow-y:auto}
 
-/* ── ELEMENTS TAGS ── */
-.elements-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
-.el-tag{background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);border-radius:20px;padding:3px 10px;font-size:11px;color:#7ab8f5;font-weight:600}
+/* SEO SECTION */
+.seo-tabs{display:flex;gap:5px;margin-bottom:12px}
+.seo-tab{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--muted);background:var(--s2);transition:all .2s}
+.seo-tab.on{background:rgba(212,168,67,.1);border-color:rgba(212,168,67,.3);color:var(--gold)}
+.seo-pane{display:none}.seo-pane.on{display:block}
+.seo-box{background:rgba(5,6,13,.9);border:1px solid var(--border);border-radius:9px;padding:14px;font-size:13px;color:var(--text);line-height:1.7;min-height:80px;white-space:pre-wrap;word-break:break-word}
+.tag-chips{display:flex;flex-wrap:wrap;gap:6px;min-height:40px}
+.tc{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:20px;padding:3px 10px;font-size:11px;color:#7ab8f5;font-weight:600;cursor:pointer;transition:all .2s}
+.tc:hover{background:rgba(59,130,246,.2)}
+.ht{background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.2);color:#c084fc}
 
-/* ── PROMPT OUTPUT ── */
-.prompt-box{background:rgba(5,6,13,0.9);border:1px solid var(--border);border-radius:10px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:var(--text);white-space:pre-wrap;word-break:break-word;min-height:160px;position:relative}
-.prompt-keyword{color:var(--gold);font-weight:600}
+/* VARIANTS */
+.var-card{background:var(--s2);border:2px solid var(--border);border-radius:10px;padding:13px;margin-bottom:9px;cursor:pointer;transition:all .2s;border-left:3px solid var(--dim)}
+.var-card:hover{border-color:var(--border2);border-left-color:var(--gold)}
+.var-card.sel{border-color:rgba(212,168,67,.3);border-left-color:var(--gold);background:rgba(212,168,67,.05)}
+.var-style{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gold);margin-bottom:5px}
+.var-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.var-preview{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--dim);margin-top:7px;line-height:1.5;max-height:60px;overflow:hidden}
 
-/* ── ACTION BUTTONS ── */
-.action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-.btn{padding:10px 18px;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
-.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0a0700;box-shadow:0 4px 15px rgba(212,168,67,0.25)}
-.btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(212,168,67,0.35)}
-.btn-ghost{background:rgba(255,255,255,0.04);color:var(--muted);border:1px solid var(--border)}
-.btn-ghost:hover{color:var(--text);border-color:var(--border2)}
-.btn-blue{background:var(--blue);color:#fff;box-shadow:0 4px 15px rgba(59,130,246,0.25)}
-.btn-blue:hover{opacity:0.88;transform:translateY(-1px)}
-
-/* ── ARENA SECTION ── */
-.arena-section{background:linear-gradient(135deg,rgba(59,130,246,0.06),rgba(168,85,247,0.04));border:1px solid rgba(59,130,246,0.15);border-radius:12px;padding:16px 18px;margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
-.arena-info{font-size:13px;color:var(--muted)}
+/* ARENA BAR */
+.arena-bar{background:linear-gradient(135deg,rgba(59,130,246,.07),rgba(168,85,247,.05));border:1px solid rgba(59,130,246,.15);border-radius:11px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px}
+.arena-info{font-size:12px;color:var(--muted)}
 .arena-info strong{color:var(--text);display:block;margin-bottom:2px}
-.arena-link{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;text-decoration:none;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;transition:all 0.2s;white-space:nowrap}
-.arena-link:hover{transform:translateY(-1px);opacity:0.9}
+.arena-link{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;text-decoration:none;padding:9px 18px;border-radius:9px;font-size:12px;font-weight:700;transition:all .2s;white-space:nowrap}
+.arena-link:hover{opacity:.88;transform:translateY(-1px)}
 
-/* ── VARIANTS ── */
-.variants-section{margin-top:20px}
-.variants-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text)}
-.variant-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden}
-.variant-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--dim);transition:background 0.2s}
-.variant-card:hover{border-color:var(--border2);transform:translateX(2px)}
-.variant-card:hover::before{background:var(--gold)}
-.variant-card.selected{border-color:rgba(212,168,67,0.3);background:rgba(212,168,67,0.05)}
-.variant-card.selected::before{background:var(--gold)}
-.variant-style{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gold);margin-bottom:6px}
-.variant-desc{font-size:12px;color:var(--muted);line-height:1.5}
+/* ACTION ROW */
+.act-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn{padding:9px 16px;border-radius:9px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .2s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0a0700;box-shadow:0 4px 14px rgba(212,168,67,.25)}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(212,168,67,.35)}
+.btn-ghost{background:rgba(255,255,255,.04);color:var(--muted);border:1px solid var(--border)}
+.btn-ghost:hover{color:var(--text);border-color:var(--border2)}
+.btn-red{background:var(--red);color:#fff}
+.btn:disabled{opacity:.4;cursor:not-allowed}
 
-/* ── HISTORY STRIP ── */
-.history-strip{margin-top:24px}
-.history-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.7px;color:var(--muted);margin-bottom:10px}
-.history-items{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
-.history-items::-webkit-scrollbar{height:3px}
-.history-items::-webkit-scrollbar-thumb{background:var(--dim);border-radius:3px}
-.hist-card{flex-shrink:0;width:130px;background:var(--s1);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all 0.2s}
-.hist-card:hover{border-color:var(--border2);transform:translateY(-2px)}
-.hist-thumb{width:100%;height:73px;object-fit:cover;background:var(--dim)}
-.hist-label{padding:6px 8px;font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* TAGS */
+.tag{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px}
+.tag-gold{background:rgba(212,168,67,.1);color:var(--gold);border:1px solid rgba(212,168,67,.2)}
+.tag-green{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2)}
 
-/* ── TOAST ── */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(10,12,24,0.95);border:1px solid var(--border);border-radius:30px;padding:10px 22px;font-size:13px;color:var(--green);opacity:0;transition:all 0.3s;pointer-events:none;z-index:1000;white-space:nowrap;backdrop-filter:blur(12px)}
+/* HISTORY */
+.hist-strip{margin-top:22px;display:none}
+.hist-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:9px}
+.hist-scroll{display:flex;gap:9px;overflow-x:auto;padding-bottom:6px}
+.hist-scroll::-webkit-scrollbar{height:3px}
+.hist-scroll::-webkit-scrollbar-thumb{background:var(--dim);border-radius:3px}
+.hcard{flex-shrink:0;width:120px;background:var(--s1);border:1px solid var(--border);border-radius:9px;overflow:hidden;cursor:pointer;transition:all .2s}
+.hcard:hover{border-color:var(--border2);transform:translateY(-2px)}
+.hcard img{width:100%;height:67px;object-fit:cover;display:block;background:var(--dim)}
+.hcard-lbl{padding:5px 7px;font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(10,12,24,.95);border:1px solid var(--border);border-radius:30px;padding:9px 20px;font-size:13px;color:var(--green);opacity:0;transition:all .3s;pointer-events:none;z-index:1000;white-space:nowrap;backdrop-filter:blur(12px)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* ── RESPONSIVE ── */
 @media(max-width:480px){
-  .header{flex-direction:column;gap:12px;align-items:flex-start}
-  .hero{padding:24px 0 20px}
-  .url-input-row{flex-direction:column}
-  .action-row{flex-direction:column}
-  .action-row .btn{width:100%;justify-content:center}
-  .arena-section{flex-direction:column}
-  .arena-link{width:100%;text-align:center}
+  .header{flex-direction:column;gap:10px;align-items:flex-start}
+  .act-row{flex-direction:column}.act-row .btn{width:100%;justify-content:center}
+  .arena-bar{flex-direction:column}.arena-link{width:100%;text-align:center}
+  .avatar-opts{grid-template-columns:1fr 1fr 1fr}
 }
 </style>
 </head>
 <body>
-
-<div class="ambient">
-  <div class="amb-blob ab1"></div>
-  <div class="amb-blob ab2"></div>
-  <div class="amb-blob ab3"></div>
-</div>
-
+<div class="ambient"><div class="ab ab1"></div><div class="ab ab2"></div><div class="ab ab3"></div></div>
 <div class="wrap">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="brand">
-      <div class="brand-logo">🎬</div>
-      <div>
-        <div class="brand-name">Kalse Studio</div>
-        <div class="brand-sub">Thumbnail Cloner</div>
-      </div>
+<!-- HEADER -->
+<div class="header">
+  <div class="brand">
+    <div class="brand-logo">🎬</div>
+    <div><div class="brand-name">Kalse Studio</div><div class="brand-sub">Thumbnail Cloner Pro</div></div>
+  </div>
+  <a href="javascript:history.back()" class="btn-back">← Retour</a>
+</div>
+
+<!-- GUIDE -->
+<div class="guide-toggle" onclick="toggleGuide()">
+  <div class="guide-toggle-left">📖 Guide d'utilisation — Comment cloner n'importe quel thumbnail</div>
+  <div class="guide-arrow" id="guide-arrow">▼</div>
+</div>
+<div class="guide-content" id="guide-content">
+  <div class="guide-grid">
+    <div class="guide-step"><div class="gs-num">1</div><div class="gs-title">Choisis une source</div><div class="gs-desc">Colle l'URL d'une vidéo YouTube dont tu veux copier le style, ou uploade directement une image de thumbnail. Tu peux aussi donner plusieurs URLs pour fusionner les meilleurs éléments.</div></div>
+    <div class="guide-step"><div class="gs-num">2</div><div class="gs-title">Configure ton persona</div><div class="gs-desc">Uploade ta photo de référence si tu veux que TON visage remplace celui du thumbnail original. Sinon choisis "Avatar HeyGen" ou "Sans visage" pour un résultat purement graphique.</div></div>
+    <div class="guide-step"><div class="gs-num">3</div><div class="gs-title">Adapte à ton sujet</div><div class="gs-desc">Rentre TON sujet de vidéo. L'IA va prendre le STYLE visuel du thumbnail original (couleurs, layout, typo, éléments) et l'appliquer à ton contenu — pas une copie, une adaptation.</div></div>
+    <div class="guide-step"><div class="gs-num">4</div><div class="gs-title">Génère & utilise</div><div class="gs-desc">Clique "Analyser & Cloner". Tu obtiens: un prompt ultra-détaillé pour arena.ai, une analyse du design, + le SEO complet (titre, description, tags, hashtags) prêt à coller sur YouTube.</div></div>
+  </div>
+  <div class="guide-tip">
+    <strong>💡 Conseil pro :</strong> Pour cloner un thumbnail d'une niche DIFFÉRENTE (ex: cloner le style d'un thumbnail Finance pour une vidéo Santé), entre simplement ton sujet santé dans "Ton sujet de vidéo". L'IA va garder exactement le style visuel mais adapter tout le contenu texte à ta niche.<br/><br/>
+    <strong>🎯 Pour un résultat identique :</strong> Uploade la photo du thumbnail en haute résolution, sélectionne "Ma photo" et uploade une photo de face bien éclairée. Le modèle Nano Banana Pro sur arena.ai reproduira fidèlement la mise en page avec ton visage.<br/><br/>
+    <strong>⚡ Astuce batch :</strong> Donne 3-5 URLs de thumbnails qui performent bien dans ta niche — l'IA analyse chaque design et crée un prompt hybride qui combine les éléments les plus efficaces de chaque thumbnail.
+  </div>
+</div>
+
+<!-- PANEL 1: SOURCE -->
+<div class="panel">
+  <div class="panel-head"><span class="panel-title">📥 Source du thumbnail à cloner</span><span class="tag tag-gold">Étape 1</span></div>
+  <div class="panel-body">
+    <div class="tabs">
+      <button class="tab active" id="t-url" onclick="switchTab('url')">🔗 URL YouTube</button>
+      <button class="tab" id="t-upload" onclick="switchTab('upload')">📁 Uploader</button>
+      <button class="tab" id="t-batch" onclick="switchTab('batch')">📦 Batch (plusieurs)</button>
     </div>
-    <a href="#" class="header-back" onclick="history.back()">← Retour</a>
-  </div>
 
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-badge">✨ IA Vision • Gratuit • Instantané</div>
-    <h1>Clone <span>n'importe quel</span><br/>thumbnail YouTube</h1>
-    <p>Colle une URL ou uploade une image — l'IA analyse le design, extrait les éléments et génère un prompt pour recréer le même style avec ton visage.</p>
-  </div>
-
-  <!-- STEP INDICATOR -->
-  <div class="steps">
-    <div class="step active" id="step1"><div class="step-num">1</div><span>Source</span></div>
-    <div class="step-line"></div>
-    <div class="step" id="step2"><div class="step-num">2</div><span>Persona</span></div>
-    <div class="step-line"></div>
-    <div class="step" id="step3"><div class="step-num">3</div><span>Analyse</span></div>
-    <div class="step-line"></div>
-    <div class="step" id="step4"><div class="step-num">4</div><span>Prompt</span></div>
-  </div>
-
-  <!-- PANEL 1: SOURCE -->
-  <div class="panel" id="panel-source">
-    <div class="panel-head">
-      <span class="panel-title">📥 Source du thumbnail</span>
-      <span style="font-size:11px;color:var(--muted)">URL ou image</span>
-    </div>
-    <div class="panel-body">
-      <div class="method-tabs">
-        <button class="method-tab active" id="tab-url" onclick="switchTab('url')">🔗 URL YouTube</button>
-        <button class="method-tab" id="tab-upload" onclick="switchTab('upload')">📁 Uploader image</button>
-        <button class="method-tab" id="tab-multi" onclick="switchTab('multi')">📦 Plusieurs à la fois</button>
-      </div>
-
-      <!-- URL TAB -->
-      <div id="tab-content-url">
+    <!-- URL -->
+    <div id="tc-url">
+      <div class="field">
         <label>URL de la vidéo YouTube</label>
-        <div class="url-input-row">
-          <input type="url" id="yt-url-input" placeholder="https://youtube.com/watch?v=... ou https://youtu.be/..."/>
-          <button class="btn btn-gold" onclick="loadYtUrl()">Charger ↓</button>
+        <div class="row">
+          <input type="url" id="yt-url" placeholder="https://youtube.com/watch?v=..."/>
+          <button class="btn btn-gold" onclick="loadUrl()">Charger ↓</button>
         </div>
-        <p class="hint">Exemples : Dr. Berg, Dr. Mandell, SugarMD, Huberman…</p>
-
-        <div class="thumb-preview-area" id="url-preview-area">
-          <div class="preview-wrap">
-            <img id="url-preview-img" src="" alt="Thumbnail"/>
-            <div class="preview-overlay"></div>
-            <div class="preview-badge" id="url-preview-badge">YouTube Thumbnail</div>
-            <button class="preview-reload" onclick="tryHq()">HD ↑</button>
-          </div>
+        <p class="hint">Fonctionne avec youtube.com, youtu.be, YouTube Shorts</p>
+      </div>
+      <div class="thumb-preview" id="url-prev">
+        <div class="prev-wrap">
+          <img id="url-img" src="" alt=""/>
+          <div class="prev-overlay"></div>
+          <div class="prev-badge" id="url-badge">Thumbnail</div>
+          <button class="prev-hd" onclick="loadHd()">HD ↑</button>
         </div>
       </div>
+    </div>
 
-      <!-- UPLOAD TAB -->
-      <div id="tab-content-upload" style="display:none">
-        <div class="drop-zone" id="single-drop">
-          <input type="file" id="single-file" accept="image/*" onchange="handleSingleFile(this)"/>
-          <div class="drop-icon">🖼️</div>
-          <div class="drop-text">Glisse le thumbnail ici ou clique</div>
-          <div class="drop-sub">PNG, JPG, WEBP — max 10MB</div>
-          <div class="drop-filename" id="single-filename"></div>
-          <img class="drop-preview" id="single-preview"/>
-        </div>
+    <!-- UPLOAD -->
+    <div id="tc-upload" style="display:none">
+      <div class="drop-zone" id="drop-main">
+        <input type="file" id="file-main" accept="image/*" onchange="handleMain(this)"/>
+        <div class="drop-icon">🖼️</div>
+        <div class="drop-txt">Glisse le thumbnail ici ou clique</div>
+        <div class="drop-sub">PNG · JPG · WEBP — max 10 MB</div>
+        <div class="file-name" id="main-fname"></div>
+        <img class="drop-preview" id="main-prev"/>
       </div>
+    </div>
 
-      <!-- MULTI TAB -->
-      <div id="tab-content-multi" style="display:none">
-        <div style="background:rgba(212,168,67,0.05);border:1px solid rgba(212,168,67,0.15);border-radius:10px;padding:14px;margin-bottom:14px">
-          <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px">📦 Mode batch — jusqu'à 5 thumbnails</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.7">Colle plusieurs URLs YouTube — une par ligne.<br/>L'IA analysera chaque thumbnail et créera un prompt combiné qui fusionne les meilleurs éléments.</div>
-        </div>
-        <label>URLs YouTube (une par ligne)</label>
-        <textarea id="multi-urls" rows="5" placeholder="https://youtube.com/watch?v=abc&#10;https://youtube.com/watch?v=def&#10;https://youtube.com/watch?v=ghi"></textarea>
-        <button class="btn btn-gold" style="margin-top:10px;width:100%;justify-content:center" onclick="loadMultiUrls()">Charger les thumbnails</button>
-        <div id="multi-preview-grid" style="display:none;margin-top:14px;display:none">
-          <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Thumbnails chargés :</div>
-          <div id="multi-thumbs" style="display:flex;gap:8px;flex-wrap:wrap"></div>
-        </div>
+    <!-- BATCH -->
+    <div id="tc-batch" style="display:none">
+      <div style="background:rgba(212,168,67,.05);border:1px solid rgba(212,168,67,.15);border-radius:9px;padding:12px;margin-bottom:12px;font-size:12px;color:var(--muted);line-height:1.7">
+        📦 <strong style="color:var(--gold)">Mode batch</strong> — Colle jusqu'à 5 URLs, une par ligne. L'IA analyse chacun et crée un prompt hybride qui fusionne les meilleurs éléments de design de tous les thumbnails.
+      </div>
+      <div class="field">
+        <label>URLs YouTube (une par ligne, max 5)</label>
+        <textarea id="batch-urls" rows="5" placeholder="https://youtube.com/watch?v=abc123&#10;https://youtube.com/watch?v=def456&#10;https://youtu.be/ghi789"></textarea>
+      </div>
+      <button class="btn btn-gold" onclick="loadBatch()" style="width:100%;justify-content:center">Charger les thumbnails →</button>
+      <div id="batch-grid" style="display:none;margin-top:12px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Thumbnails chargés :</div>
+        <div id="batch-thumbs" style="display:flex;gap:8px;flex-wrap:wrap"></div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- PANEL 2: PERSONA -->
-  <div class="panel" id="panel-persona">
-    <div class="panel-head">
-      <span class="panel-title">👤 Ton avatar / persona</span>
-      <span style="font-size:11px;color:var(--muted)">Qui va remplacer le visage ?</span>
+<!-- PANEL 2: PERSONA -->
+<div class="panel">
+  <div class="panel-head"><span class="panel-title">👤 Ton avatar / persona</span><span class="tag tag-gold">Étape 2</span></div>
+  <div class="panel-body">
+    <div class="avatar-opts">
+      <div class="ao sel" id="ao-photo" onclick="setAvatar('photo')"><span class="ao-ic">📸</span>Ma photo</div>
+      <div class="ao" id="ao-heygen" onclick="setAvatar('heygen')"><span class="ao-ic">🤖</span>HeyGen</div>
+      <div class="ao" id="ao-noface" onclick="setAvatar('noface')"><span class="ao-ic">🎭</span>Sans visage</div>
     </div>
-    <div class="panel-body">
-      <div class="avatar-options">
-        <div class="avatar-opt selected" id="ao-photo" onclick="selectAvatar('photo')"><span class="ao-icon">📸</span>Ma photo</div>
-        <div class="avatar-opt" id="ao-heygen" onclick="selectAvatar('heygen')"><span class="ao-icon">🤖</span>Avatar HeyGen</div>
-        <div class="avatar-opt" id="ao-noface" onclick="selectAvatar('noface')"><span class="ao-icon">🎭</span>Sans visage</div>
-      </div>
 
-      <div id="persona-photo-section">
-        <label>Ta photo de référence</label>
-        <div class="persona-row">
-          <div class="persona-face-drop" id="face-drop">
-            <input type="file" id="face-file" accept="image/*" onchange="handleFaceFile(this)"/>
-            <img class="persona-face-preview" id="face-preview"/>
-            <div style="font-size:20px;margin-bottom:4px">👤</div>
-            <div style="font-size:12px;color:var(--muted)">Clique pour uploader<br/><span style="font-size:10px;color:var(--dim)">PNG/JPG min 512×512</span></div>
-            <div class="drop-filename" id="face-filename"></div>
+    <div id="s-photo">
+      <div class="grid2">
+        <div class="field">
+          <label>Ta photo de référence</label>
+          <div class="face-drop" id="face-drop">
+            <input type="file" id="face-file" accept="image/*" onchange="handleFace(this)"/>
+            <img class="face-prev" id="face-prev"/>
+            <div style="font-size:18px;margin-bottom:4px">👤</div>
+            <div style="font-size:11px;color:var(--muted)">Photo face, bonne lumière<br/><span style="color:var(--dim);font-size:10px">PNG/JPG min 512×512</span></div>
+            <div class="file-name" id="face-fname"></div>
           </div>
-          <div>
-            <label>Genre du persona</label>
-            <div style="display:flex;gap:8px;margin-bottom:12px">
-              <button class="btn btn-ghost" id="g-man" onclick="setGender('man')" style="flex:1">👨 Homme</button>
-              <button class="btn btn-gold" id="g-woman" onclick="setGender('woman')" style="flex:1">👩 Femme</button>
-            </div>
+        </div>
+        <div>
+          <label>Genre</label>
+          <div class="gender-row">
+            <button class="btn btn-ghost" id="g-h" onclick="setGender('homme')" style="flex:1">👨 Homme</button>
+            <button class="btn btn-gold" id="g-f" onclick="setGender('femme')" style="flex:1">👩 Femme</button>
+          </div>
+          <div class="field">
             <label>Description (optionnel)</label>
-            <input type="text" id="persona-desc" placeholder="Ex: médecin en blouse blanche, 45 ans, souriant"/>
+            <input type="text" id="persona-desc" placeholder="Ex: médecin blouse blanche, regard confiant"/>
           </div>
         </div>
       </div>
+    </div>
 
-      <div id="persona-heygen-section" style="display:none">
+    <div id="s-heygen" style="display:none">
+      <div class="field">
         <label>Description de ton avatar HeyGen</label>
-        <input type="text" id="heygen-desc" placeholder="Ex: Dr. David, avatar masculin professionnel en blouse blanche"/>
-        <p class="hint">L'avatar HeyGen sera décrit dans le prompt pour que Nano Banana le reconstitue</p>
+        <input type="text" id="heygen-desc" placeholder="Ex: Dr. David, homme 45 ans, blouse blanche, stéthoscope"/>
+        <p class="hint">Sois très précis — cela permet à Nano Banana de recréer ton avatar fidèlement</p>
       </div>
+    </div>
 
-      <div id="persona-noface-section" style="display:none">
-        <div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:13px;color:var(--muted)">
-          Le thumbnail sera généré <strong style="color:var(--text)">sans visage humain</strong> — uniquement l'objet principal, le texte et les éléments graphiques.
-        </div>
+    <div id="s-noface" style="display:none">
+      <div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:13px;color:var(--muted)">
+        Thumbnail généré <strong style="color:var(--text)">sans visage humain</strong> — uniquement objet principal, texte, couleurs et éléments graphiques.
       </div>
     </div>
   </div>
+</div>
 
-  <!-- PANEL 3: NICHE & OPTIONS -->
-  <div class="panel" id="panel-options">
-    <div class="panel-head">
-      <span class="panel-title">⚙️ Options de clonage</span>
+<!-- PANEL 3: SUJET & OPTIONS -->
+<div class="panel">
+  <div class="panel-head"><span class="panel-title">🎯 Ton sujet & options</span><span class="tag tag-gold">Étape 3</span></div>
+  <div class="panel-body">
+    <div class="field">
+      <label>Ton sujet de vidéo <span style="color:var(--red)">*</span></label>
+      <input type="text" id="my-topic" placeholder="Ex: Les 7 aliments qui nettoient les artères après 60 ans"/>
+      <p class="hint">L'IA gardera le STYLE visuel du thumbnail source et adaptera tout le contenu à TON sujet</p>
     </div>
+    <div class="grid2">
+      <div class="field">
+        <label>Ta niche</label>
+        <select id="my-niche">
+          <option>Santé / Senior Longevity</option>
+          <option>Santé / Métabolisme & Diabète</option>
+          <option>Santé / Hormones & Ménopause</option>
+          <option>Santé / Cerveau & Cognitif</option>
+          <option>Santé / Cœur & Cholestérol</option>
+          <option>Santé / Remèdes Naturels</option>
+          <option>Santé / Sommeil</option>
+          <option>Fitness & Musculation</option>
+          <option>Finance Personnelle</option>
+          <option>Développement Personnel</option>
+          <option>Tech & Intelligence Artificielle</option>
+          <option>Cuisine & Nutrition</option>
+          <option>Business & Entrepreneuriat</option>
+          <option>Voyage & Lifestyle</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Langue du SEO</label>
+        <select id="seo-lang">
+          <option>Français</option>
+          <option>English</option>
+          <option>Español</option>
+          <option>Português</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Headline du thumbnail (optionnel)</label>
+      <input type="text" id="my-headline" placeholder="Ex: ARRÊTEZ ÇA MAINTENANT! / 9 SIGNES CACHÉS"/>
+      <p class="hint">Si vide, l'IA génère le headline automatiquement basé sur le style du thumbnail source</p>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN BUTTON -->
+<button class="main-btn" id="main-btn" onclick="analyzeAndClone()">
+  🔍 Analyser & Cloner le thumbnail
+</button>
+
+<!-- PROGRESS -->
+<div class="prog-wrap" id="prog-wrap">
+  <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+  <div class="prog-items">
+    <div class="pi" id="pi1"><div class="pi-dot"></div><span>Chargement et analyse du thumbnail source…</span></div>
+    <div class="pi" id="pi2"><div class="pi-dot"></div><span>Extraction du design : couleurs, layout, typographie, éléments…</span></div>
+    <div class="pi" id="pi3"><div class="pi-dot"></div><span>Adaptation du style à ton sujet…</span></div>
+    <div class="pi" id="pi4"><div class="pi-dot"></div><span>Génération du prompt de clonage ultra-précis…</span></div>
+    <div class="pi" id="pi5"><div class="pi-dot"></div><span>Création du SEO complet (titre, description, tags, hashtags)…</span></div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div class="results" id="results">
+
+  <!-- ANALYSE -->
+  <div class="panel" style="margin-top:14px">
+    <div class="panel-head"><span class="panel-title">🔬 Analyse du design original</span><span class="tag tag-green">✓ Complété</span></div>
     <div class="panel-body">
-      <label>Sous-niche (optionnel — améliore l'analyse)</label>
-      <div class="niche-pills" id="niche-pills">
-        <span class="niche-pill active" onclick="toggleNiche(this)">Senior Longevity</span>
-        <span class="niche-pill" onclick="toggleNiche(this)">Metabolic / Diabetes</span>
-        <span class="niche-pill" onclick="toggleNiche(this)">Brain / Cognitive</span>
-        <span class="niche-pill" onclick="toggleNiche(this)">Heart Health</span>
-        <span class="niche-pill" onclick="toggleNiche(this)">Hormone / Menopause</span>
-        <span class="niche-pill" onclick="toggleNiche(this)">Natural Remedies</span>
-        <span class="niche-pill" onclick="toggleNiche(this)">Sleep</span>
-        <span class="niche-pill" onclick="toggleNiche(this)">Fitness / Strength</span>
-        <span class="niche-pill" onclick="toggleNiche(this)">Finance</span>
-        <span class="niche-pill" onclick="toggleNiche(this)">Tech / AI</span>
-        <span class="niche-pill" onclick="toggleNiche(this)">Motivation</span>
-        <span class="niche-pill" onclick="toggleNiche(this)">Autre</span>
+      <div style="display:grid;grid-template-columns:180px 1fr;gap:14px;align-items:start">
+        <div style="border-radius:8px;overflow:hidden;border:1px solid var(--border)"><img id="res-img" src="" style="width:100%;display:block"/></div>
+        <div>
+          <div class="an-grid">
+            <div class="an-chip"><div class="an-lbl">Mise en page</div><div class="an-val gold" id="an-layout">—</div></div>
+            <div class="an-chip"><div class="an-lbl">Style CTR</div><div class="an-val" id="an-style">—</div></div>
+            <div class="an-chip"><div class="an-lbl">Texte détecté</div><div class="an-val" id="an-text">—</div></div>
+            <div class="an-chip"><div class="an-lbl">Fond / Background</div><div class="an-val" id="an-bg">—</div></div>
+          </div>
+          <div class="an-chip">
+            <div class="an-lbl">Palette de couleurs</div>
+            <div class="colors-row" id="an-colors"></div>
+          </div>
+        </div>
       </div>
-      <div style="height:14px"></div>
-      <label>Ton sujet de vidéo (optionnel)</label>
-      <input type="text" id="video-topic" placeholder="Ex: les 7 aliments qui nettoient les artères après 60 ans"/>
-      <p class="hint">Si renseigné, le prompt sera adapté à ton contenu spécifique</p>
+      <div class="an-chip" style="margin-top:10px">
+        <div class="an-lbl">Éléments visuels identifiés</div>
+        <div class="an-val" id="an-elements" style="font-size:12px;color:var(--muted);line-height:1.6">—</div>
+      </div>
+      <div class="an-chip" style="margin-top:10px">
+        <div class="an-lbl">Pourquoi ce thumbnail performe</div>
+        <div class="an-val" id="an-why" style="font-size:12px;color:var(--muted);line-height:1.6">—</div>
+      </div>
     </div>
   </div>
 
-  <!-- ANALYZE BUTTON -->
-  <button class="analyze-btn" id="analyze-btn" onclick="analyzeAndGenerate()">
-    <span>🔍</span> Analyser & Générer le prompt clone
-  </button>
-
-  <!-- PROGRESS -->
-  <div class="progress-wrap" id="progress-wrap">
-    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-    <div class="progress-steps">
-      <div class="prog-step" id="ps1"><div class="ps-icon">1</div><span>Chargement du thumbnail…</span></div>
-      <div class="prog-step" id="ps2"><div class="ps-icon">2</div><span>Analyse IA du design (couleurs, layout, texte)…</span></div>
-      <div class="prog-step" id="ps3"><div class="ps-icon">3</div><span>Extraction des éléments visuels…</span></div>
-      <div class="prog-step" id="ps4"><div class="ps-icon">4</div><span>Génération du prompt clone…</span></div>
+  <!-- PROMPT -->
+  <div class="panel">
+    <div class="panel-head"><span class="panel-title">✨ Prompt de clonage — Prêt pour arena.ai</span></div>
+    <div class="panel-body">
+      <div style="position:relative">
+        <div class="prompt-box" id="main-prompt"></div>
+        <button class="btn btn-gold" style="position:absolute;top:10px;right:10px;padding:6px 12px;font-size:11px" onclick="copyEl('main-prompt')">📋 Copier</button>
+      </div>
+      <div class="arena-bar">
+        <div class="arena-info">
+          <strong>Étape suivante → arena.ai</strong>
+          Colle le prompt + attache ta photo de référence → sélectionne Nano Banana Pro → Entrée
+        </div>
+        <a href="https://arena.ai/image/direct" target="_blank" class="arena-link">Ouvrir arena.ai →</a>
+      </div>
+      <div class="act-row">
+        <button class="btn btn-ghost" onclick="genVariants()">🎨 Générer 3 variantes de style</button>
+        <button class="btn btn-ghost" onclick="analyzeAndClone()">🔄 Regénérer</button>
+        <button class="btn btn-ghost" onclick="saveHist()">💾 Sauvegarder</button>
+      </div>
     </div>
   </div>
 
-  <!-- RESULTS -->
-  <div class="results-wrap" id="results-wrap">
-
-    <div class="panel">
-      <div class="panel-head">
-        <span class="panel-title">🔬 Analyse du thumbnail original</span>
-        <span class="panel-title" style="color:var(--green);font-size:12px">✓ Analysé</span>
-      </div>
-      <div class="panel-body">
-        <div style="display:grid;grid-template-columns:200px 1fr;gap:16px;align-items:start">
-          <div>
-            <div style="border-radius:8px;overflow:hidden;border:1px solid var(--border)">
-              <img id="result-thumb-img" src="" style="width:100%;display:block"/>
-            </div>
-          </div>
-          <div>
-            <div class="analysis-grid">
-              <div class="analysis-chip"><div class="ac-label">Layout</div><div class="ac-value gold" id="an-layout">—</div></div>
-              <div class="analysis-chip"><div class="ac-label">Style CTR</div><div class="ac-value" id="an-style">—</div></div>
-              <div class="analysis-chip"><div class="ac-label">Texte principal</div><div class="ac-value" id="an-text">—</div></div>
-              <div class="analysis-chip"><div class="ac-label">Éléments clés</div><div class="ac-value" id="an-elements">—</div></div>
-            </div>
-            <div class="analysis-chip" style="margin-top:10px">
-              <div class="ac-label">Palette de couleurs</div>
-              <div class="color-row" id="an-colors"></div>
-            </div>
-          </div>
-        </div>
-        <div style="margin-top:14px" class="analysis-chip">
-          <div class="ac-label">Stratégie thumbnail</div>
-          <div class="ac-value" id="an-strategy" style="font-size:12px;line-height:1.6;color:var(--muted)">—</div>
-        </div>
+  <!-- VARIANTES -->
+  <div class="panel" id="var-panel" style="display:none">
+    <div class="panel-head"><span class="panel-title">🎨 Variantes de style</span></div>
+    <div class="panel-body">
+      <div id="var-list"></div>
+      <div class="act-row" style="margin-top:4px">
+        <button class="btn btn-gold" onclick="copyVar()">📋 Copier la variante sélectionnée</button>
       </div>
     </div>
-
-    <div class="panel">
-      <div class="panel-head">
-        <span class="panel-title">✨ Prompt clone généré</span>
-        <span style="font-size:11px;color:var(--muted)">Prêt pour arena.ai</span>
-      </div>
-      <div class="panel-body">
-        <div style="position:relative">
-          <div class="prompt-box" id="main-prompt"></div>
-          <button class="btn btn-gold" style="position:absolute;top:10px;right:10px;padding:6px 12px;font-size:11px" onclick="copyPrompt()">📋 Copier</button>
-        </div>
-
-        <div class="arena-section">
-          <div class="arena-info">
-            <strong>Étape suivante : arena.ai</strong>
-            Colle le prompt + attache ta photo de référence → Nano Banana Pro
-          </div>
-          <a href="https://arena.ai/image/direct" target="_blank" class="arena-link">Ouvrir arena.ai →</a>
-        </div>
-
-        <div class="action-row">
-          <button class="btn btn-ghost" onclick="generateVariants()">🎨 3 variantes de style</button>
-          <button class="btn btn-ghost" onclick="regenerate()">🔄 Regénérer</button>
-          <button class="btn btn-ghost" onclick="saveToHistory()">💾 Sauvegarder</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- VARIANTS -->
-    <div class="variants-section" id="variants-section" style="display:none">
-      <div class="panel">
-        <div class="panel-head"><span class="panel-title">🎨 Variantes de style</span></div>
-        <div class="panel-body">
-          <div id="variants-list"></div>
-          <div class="action-row" style="margin-top:10px">
-            <button class="btn btn-gold" onclick="copyVariant()">📋 Copier variante sélectionnée</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
-  <!-- HISTORY -->
-  <div class="history-strip" id="history-strip" style="display:none">
-    <div class="history-title">Clones récents</div>
-    <div class="history-items" id="history-items"></div>
+  <!-- SEO -->
+  <div class="panel">
+    <div class="panel-head"><span class="panel-title">📈 SEO complet généré</span><span class="tag tag-green">✓ Auto</span></div>
+    <div class="panel-body">
+      <div class="seo-tabs">
+        <button class="seo-tab on" onclick="setSeoTab('title')">🎯 Titre</button>
+        <button class="seo-tab" onclick="setSeoTab('desc')">📄 Description</button>
+        <button class="seo-tab" onclick="setSeoTab('tags')">🏷️ Tags</button>
+        <button class="seo-tab" onclick="setSeoTab('ht')">📢 Hashtags</button>
+      </div>
+      <div class="seo-pane on" id="sp-title">
+        <div style="position:relative"><div class="seo-box" id="seo-title"></div><button class="btn btn-ghost" style="position:absolute;top:8px;right:8px;padding:4px 9px;font-size:11px" onclick="copyEl('seo-title')">Copier</button></div>
+        <div style="margin-top:8px;font-size:11px;color:var(--muted)" id="title-char">0 caractères</div>
+      </div>
+      <div class="seo-pane" id="sp-desc">
+        <div style="position:relative"><div class="seo-box" id="seo-desc" style="min-height:120px"></div><button class="btn btn-ghost" style="position:absolute;top:8px;right:8px;padding:4px 9px;font-size:11px" onclick="copyEl('seo-desc')">Copier</button></div>
+      </div>
+      <div class="seo-pane" id="sp-tags">
+        <div class="tag-chips" id="seo-tags"></div>
+        <button class="btn btn-ghost" style="margin-top:10px;font-size:11px" onclick="copyTags()">📋 Copier tous les tags</button>
+      </div>
+      <div class="seo-pane" id="sp-ht">
+        <div class="tag-chips" id="seo-ht"></div>
+        <button class="btn btn-ghost" style="margin-top:10px;font-size:11px" onclick="copyHt()">📋 Copier les hashtags</button>
+      </div>
+    </div>
   </div>
 
 </div>
 
+<!-- HISTORY -->
+<div class="hist-strip" id="hist-strip">
+  <div class="hist-label">Clones récents</div>
+  <div class="hist-scroll" id="hist-items"></div>
+</div>
+
+</div><!-- /wrap -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ── STATE ──
+const KEY = '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';
 const S = {
-  activeTab: 'url',
-  avatarType: 'photo',
-  gender: 'woman',
-  selectedNiche: 'Senior Longevity',
-  currentThumbUrl: '',
-  currentThumbBase64: '',
-  currentPrompt: '',
-  selectedVariant: 0,
-  history: JSON.parse(localStorage.getItem('clone_history') || '[]'),
-  groqKey: localStorage.getItem('groq_key') || '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',
+  tab:'url', avatar:'photo', gender:'femme',
+  thumbUrl:'', thumbB64:'', batchUrls:[],
+  prompt:'', seoData:{}, history: JSON.parse(localStorage.getItem('ksc_hist')||'[]'),
+  selVar:0, varPrompts:[], tags:[], hashtags:[]
 };
 
+// ── GUIDE ──
+function toggleGuide(){
+  const c=document.getElementById('guide-content'), a=document.getElementById('guide-arrow');
+  c.classList.toggle('show'); a.classList.toggle('open');
+}
+
 // ── TABS ──
-function switchTab(tab) {
-  S.activeTab = tab;
-  ['url','upload','multi'].forEach(t => {
-    document.getElementById('tab-content-'+t).style.display = t===tab ? 'block' : 'none';
-    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+function switchTab(t){
+  S.tab=t;
+  ['url','upload','batch'].forEach(x=>{
+    document.getElementById('tc-'+x).style.display=x===t?'block':'none';
+    document.getElementById('t-'+x).classList.toggle('active',x===t);
   });
 }
 
-// ── AVATAR SELECT ──
-function selectAvatar(type) {
-  S.avatarType = type;
-  ['photo','heygen','noface'].forEach(t => document.getElementById('ao-'+t).classList.toggle('selected', t===type));
-  document.getElementById('persona-photo-section').style.display = type==='photo' ? 'block' : 'none';
-  document.getElementById('persona-heygen-section').style.display = type==='heygen' ? 'block' : 'none';
-  document.getElementById('persona-noface-section').style.display = type==='noface' ? 'block' : 'none';
+// ── AVATAR ──
+function setAvatar(a){
+  S.avatar=a;
+  ['photo','heygen','noface'].forEach(x=>{
+    document.getElementById('ao-'+x).classList.toggle('sel',x===a);
+    document.getElementById('s-'+x).style.display=x===a?'block':'none';
+  });
 }
 
-function setGender(g) {
-  S.gender = g;
-  document.getElementById('g-man').className = 'btn '+(g==='man' ? 'btn-gold' : 'btn-ghost');
-  document.getElementById('g-woman').className = 'btn '+(g==='woman' ? 'btn-gold' : 'btn-ghost');
+function setGender(g){
+  S.gender=g;
+  document.getElementById('g-h').className='btn '+(g==='homme'?'btn-gold':'btn-ghost');
+  document.getElementById('g-f').className='btn '+(g==='femme'?'btn-gold':'btn-ghost');
 }
 
-// ── NICHE ──
-function toggleNiche(el) {
-  document.querySelectorAll('.niche-pill').forEach(p => p.classList.remove('active'));
-  el.classList.add('active');
-  S.selectedNiche = el.textContent;
+// ── YOUTUBE ──
+function getVidId(url){
+  const ps=[/youtu\.be\/([\w-]{11})/,/youtube\.com\/watch\?v=([\w-]{11})/,/youtube\.com\/shorts\/([\w-]{11})/,/v=([\w-]{11})/];
+  for(const p of ps){const m=url.match(p);if(m)return m[1];}return null;
 }
 
-// ── YOUTUBE URL ──
-function extractVidId(url) {
-  const patterns = [/youtu\.be\/([\w-]{11})/,/youtube\.com\/watch\?v=([\w-]{11})/,/youtube\.com\/shorts\/([\w-]{11})/,/v=([\w-]{11})/];
-  for(const p of patterns) { const m = url.match(p); if(m) return m[1]; }
-  return null;
-}
-
-function loadYtUrl() {
-  const url = document.getElementById('yt-url-input').value.trim();
-  if(!url) return toast('⚠️ Entre une URL YouTube', 'var(--gold)');
-  const id = extractVidId(url);
-  if(!id) return toast('⚠️ URL invalide', 'var(--gold)');
-  const imgUrl = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
-  S.currentThumbUrl = imgUrl;
-  const img = document.getElementById('url-preview-img');
-  img.src = imgUrl;
-  img.onerror = () => { img.src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`; S.currentThumbUrl = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`; };
-  document.getElementById('url-preview-area').classList.add('show');
-  document.getElementById('url-preview-badge').textContent = `ID: ${id}`;
-  setStep(2);
+function loadUrl(){
+  const url=document.getElementById('yt-url').value.trim();
+  if(!url) return toast('⚠️ Entre une URL YouTube','var(--gold)');
+  const id=getVidId(url);
+  if(!id) return toast('⚠️ URL invalide','var(--gold)');
+  const src=`https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+  S.thumbUrl=src;
+  const img=document.getElementById('url-img');
+  img.src=src;
+  img.onerror=()=>{img.src=`https://i.ytimg.com/vi/${id}/hqdefault.jpg`;S.thumbUrl=img.src;};
+  document.getElementById('url-badge').textContent='ID: '+id;
+  document.getElementById('url-prev').classList.add('show');
   toast('✅ Thumbnail chargé !');
 }
 
-function tryHq() {
-  const url = document.getElementById('yt-url-input').value.trim();
-  const id = extractVidId(url);
+function loadHd(){
+  const url=document.getElementById('yt-url').value.trim();
+  const id=getVidId(url);
   if(!id) return;
-  const img = document.getElementById('url-preview-img');
-  img.src = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+  const img=document.getElementById('url-img');
+  img.src=`https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
 }
 
-// ── FILE UPLOADS ──
-function handleSingleFile(input) {
-  const file = input.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    S.currentThumbBase64 = e.target.result;
-    const prev = document.getElementById('single-preview');
-    prev.src = e.target.result; prev.style.display='block';
-    document.getElementById('single-filename').textContent = file.name;
-    document.getElementById('single-drop').classList.add('filled');
-    setStep(2); toast('✅ Image chargée !');
+// ── FILE UPLOAD ──
+function handleMain(inp){
+  const file=inp.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=e=>{
+    S.thumbB64=e.target.result; S.thumbUrl='';
+    const p=document.getElementById('main-prev');
+    p.src=e.target.result; p.style.display='block';
+    document.getElementById('main-fname').textContent=file.name;
+    document.getElementById('drop-main').classList.add('filled');
+    toast('✅ Image chargée !');
   };
-  reader.readAsDataURL(file);
+  r.readAsDataURL(file);
 }
 
-function handleFaceFile(input) {
-  const file = input.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const prev = document.getElementById('face-preview');
-    prev.src = e.target.result; prev.style.display='block';
-    document.getElementById('face-filename').textContent = file.name;
+// drag/drop
+const dz=document.getElementById('drop-main');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+dz.addEventListener('drop',e=>{
+  e.preventDefault();dz.classList.remove('drag');
+  const f=e.dataTransfer.files[0];
+  if(f&&f.type.startsWith('image/')){const dt=new DataTransfer();dt.items.add(f);document.getElementById('file-main').files=dt.files;handleMain(document.getElementById('file-main'));}
+});
+
+function handleFace(inp){
+  const file=inp.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=e=>{
+    const p=document.getElementById('face-prev');
+    p.src=e.target.result; p.style.display='block';
+    document.getElementById('face-fname').textContent=file.name;
     document.getElementById('face-drop').classList.add('filled');
     toast('✅ Photo uploadée !');
   };
-  reader.readAsDataURL(file);
+  r.readAsDataURL(file);
 }
 
-// ── DRAG & DROP ──
-const dropZone = document.getElementById('single-drop');
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
-dropZone.addEventListener('drop', e => {
-  e.preventDefault(); dropZone.classList.remove('drag');
-  const file = e.dataTransfer.files[0];
-  if(file && file.type.startsWith('image/')) { const dt = new DataTransfer(); dt.items.add(file); document.getElementById('single-file').files = dt.files; handleSingleFile(document.getElementById('single-file')); }
-});
-
-// ── MULTI URLS ──
-function loadMultiUrls() {
-  const urls = document.getElementById('multi-urls').value.trim().split('\n').filter(u => u.trim()).slice(0,5);
-  if(!urls.length) return toast('⚠️ Entre au moins une URL', 'var(--gold)');
-  const container = document.getElementById('multi-thumbs');
-  container.innerHTML = '';
-  let loaded = 0;
-  urls.forEach(url => {
-    const id = extractVidId(url.trim());
-    if(!id) return;
-    const img = document.createElement('img');
-    img.src = `https://i.ytimg.com/vi/${id}/mqdefault.jpg`;
-    img.style.cssText = 'width:120px;height:67px;object-fit:cover;border-radius:6px;border:1px solid var(--border)';
-    img.onerror = () => img.style.display='none';
-    img.onload = () => { loaded++; if(loaded===1) S.currentThumbUrl = img.src; };
-    container.appendChild(img);
+// ── BATCH ──
+function loadBatch(){
+  const lines=document.getElementById('batch-urls').value.trim().split('\n').filter(l=>l.trim()).slice(0,5);
+  if(!lines.length) return toast('⚠️ Entre au moins une URL','var(--gold)');
+  S.batchUrls=lines;
+  const cont=document.getElementById('batch-thumbs');
+  cont.innerHTML='';
+  lines.forEach(url=>{
+    const id=getVidId(url.trim()); if(!id) return;
+    const img=document.createElement('img');
+    img.src=`https://i.ytimg.com/vi/${id}/mqdefault.jpg`;
+    img.style.cssText='width:110px;height:62px;object-fit:cover;border-radius:7px;border:1px solid var(--border)';
+    img.onerror=()=>img.style.display='none';
+    if(!S.thumbUrl) S.thumbUrl=`https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+    cont.appendChild(img);
   });
-  document.getElementById('multi-preview-grid').style.display = 'block';
-  setStep(2);
-  toast(`✅ ${urls.length} URLs chargées`);
+  document.getElementById('batch-grid').style.display='block';
+  toast(`✅ ${lines.length} URL${lines.length>1?'s':''} chargée${lines.length>1?'s':''}`);
 }
 
-// ── STEPS ──
-function setStep(n) {
-  for(let i=1;i<=4;i++) {
-    const s = document.getElementById('step'+i);
-    s.classList.toggle('active', i===n);
-    s.classList.toggle('done', i<n);
-  }
-}
-
-// ── GROQ CALL ──
-async function callGroq(prompt, maxTokens=2000) {
-  const key = localStorage.getItem('groq_key') || S.groqKey;
-  if(!key) throw new Error('Clé Groq manquante — configure dans Kalse Studio');
-  const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+// ── GROQ ──
+async function groq(prompt, maxTok=2500){
+  const key=localStorage.getItem('groq_key')||KEY;
+  const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
     method:'POST',
     headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
-    body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:[{role:'user',content:prompt}],temperature:0.7,max_tokens:maxTokens})
+    body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:[{role:'user',content:prompt}],temperature:0.75,max_tokens:maxTok})
   });
-  const d = await r.json();
-  if(d.error) throw new Error(d.error.message);
-  return d.choices?.[0]?.message?.content || '';
+  const d=await r.json();
+  if(d.error) throw new Error(d.error.message||'Erreur API Groq');
+  return d.choices?.[0]?.message?.content||'';
 }
 
-// ── PROGRESS ANIMATION ──
-let progressTimer = null;
-function startProgress() {
-  const steps = ['ps1','ps2','ps3','ps4'];
-  const fill = document.getElementById('progress-fill');
-  let idx = 0;
-  steps.forEach(s => { const el=document.getElementById(s); el.classList.remove('active','done'); });
-  fill.style.width = '0%';
-  function next() {
-    if(idx > 0) document.getElementById(steps[idx-1]).classList.replace('active','done');
-    if(idx < steps.length) {
-      document.getElementById(steps[idx]).classList.add('active');
-      fill.style.width = ((idx+1)/steps.length*90)+'%';
-      idx++;
-      progressTimer = setTimeout(next, 2500 + Math.random()*1000);
+// ── PROGRESS ──
+let _pt=null,_pi=0;
+function startProg(){
+  const steps=['pi1','pi2','pi3','pi4','pi5'];
+  document.getElementById('prog-fill').style.width='0%';
+  steps.forEach(s=>{const e=document.getElementById(s);e.classList.remove('act','done');});
+  _pi=0;
+  function nx(){
+    if(_pi>0) document.getElementById(steps[_pi-1]).classList.replace('act','done');
+    if(_pi<steps.length){
+      document.getElementById(steps[_pi]).classList.add('act');
+      document.getElementById('prog-fill').style.width=(((_pi+1)/steps.length)*85)+'%';
+      _pi++;
+      _pt=setTimeout(nx, 2800+Math.random()*900);
     }
   }
-  next();
+  nx();
 }
-function finishProgress() {
-  if(progressTimer) clearTimeout(progressTimer);
-  document.querySelectorAll('.prog-step').forEach(s => { s.classList.remove('active'); s.classList.add('done'); });
-  document.getElementById('progress-fill').style.width = '100%';
+function endProg(){
+  if(_pt) clearTimeout(_pt);
+  document.querySelectorAll('.pi').forEach(e=>{e.classList.remove('act');e.classList.add('done');});
+  document.getElementById('prog-fill').style.width='100%';
+}
+
+// ── SEO TABS ──
+function setSeoTab(tab){
+  document.querySelectorAll('.seo-tab').forEach((t,i)=>t.classList.toggle('on',['title','desc','tags','ht'][i]===tab));
+  ['title','desc','tags','ht'].forEach(t=>document.getElementById('sp-'+t).classList.toggle('on',t===tab));
 }
 
 // ── MAIN ANALYZE ──
-async function analyzeAndGenerate() {
-  const thumbUrl = S.currentThumbUrl || S.currentThumbBase64;
-  if(!thumbUrl) return toast('⚠️ Charge un thumbnail d\'abord (URL ou image)', 'var(--gold)');
+async function analyzeAndClone(){
+  const topic=document.getElementById('my-topic').value.trim();
+  if(!topic) return toast('⚠️ Entre ton sujet de vidéo — Étape 3','var(--gold)');
 
-  const btn = document.getElementById('analyze-btn');
-  btn.disabled = true;
-  document.getElementById('progress-wrap').classList.add('show');
-  document.getElementById('results-wrap').classList.remove('show');
-  document.getElementById('variants-section').style.display = 'none';
-  setStep(3);
-  startProgress();
+  const src = S.tab==='upload' ? S.thumbB64 : S.thumbUrl;
+  if(!src && S.tab!=='batch') return toast('⚠️ Charge un thumbnail source d\'abord','var(--gold)');
+  if(S.tab==='batch' && !S.batchUrls.length) return toast('⚠️ Charge les URLs batch d\'abord','var(--gold)');
+
+  const btn=document.getElementById('main-btn');
+  btn.disabled=true;
+  document.getElementById('prog-wrap').classList.add('show');
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('var-panel').style.display='none';
+  startProg();
 
   try {
-    const niche = S.selectedNiche;
-    const topic = document.getElementById('video-topic').value.trim();
-    const avatarType = S.avatarType;
-    const gender = S.gender;
-    const personaDesc = document.getElementById('persona-desc')?.value.trim() || '';
-    const heygenDesc = document.getElementById('heygen-desc')?.value.trim() || '';
-    const isMulti = S.activeTab === 'multi';
-    const multiUrls = isMulti ? document.getElementById('multi-urls').value.trim().split('\n').filter(u=>u.trim()).slice(0,5) : [];
+    const niche=document.getElementById('my-niche').value;
+    const lang=document.getElementById('seo-lang').value;
+    const headline=document.getElementById('my-headline').value.trim();
+    const avatar=S.avatar, gender=S.gender;
+    const personaDesc=document.getElementById('persona-desc')?.value.trim()||'';
+    const heygenDesc=document.getElementById('heygen-desc')?.value.trim()||'';
 
-    // Build thumbnail context
-    let thumbContext = '';
-    if(S.activeTab === 'url') {
-      thumbContext = `URL du thumbnail analysé: ${thumbUrl}\nCe thumbnail provient d'une vidéo YouTube dans la niche "${niche}".`;
-    } else if(S.activeTab === 'upload') {
-      thumbContext = `L'utilisateur a uploadé un thumbnail personnalisé dans la niche "${niche}".`;
+    // Source context
+    let srcCtx='';
+    if(S.tab==='url') srcCtx=`Thumbnail source: ${S.thumbUrl}. URL YouTube d'une vidéo dans la niche "${niche}".`;
+    else if(S.tab==='upload') srcCtx=`L'utilisateur a uploadé un thumbnail personnalisé (image base64) dans la niche "${niche}".`;
+    else srcCtx=`Batch de ${S.batchUrls.length} thumbnails YouTube à fusionner:\n${S.batchUrls.join('\n')}`;
+
+    // Persona
+    let personaCtx='';
+    if(avatar==='photo'){
+      personaCtx=`REMPLACEMENT DU VISAGE: Le visage original doit être REMPLACÉ par ${gender==='homme'?'un homme':'une femme'} fourni via photo de référence.${personaDesc?' Description: '+personaDesc+'.':''} Dans le prompt, utilise TOUJOURS "the ${gender==='homme'?'man':'woman'} in the attached face reference" pour désigner la personne. Ne jamais inventer un autre visage.`;
+    } else if(avatar==='heygen'){
+      personaCtx=`AVATAR HEYGEN: Décrire l'avatar suivant avec maximum de détails: ${heygenDesc||'avatar professionnel médical, blouse blanche, stéthoscope, regard confiant, 45 ans'}. Décrire chaque caractéristique physique précisément pour que Nano Banana Pro le reproduise.`;
     } else {
-      thumbContext = `L'utilisateur a fourni ${multiUrls.length} URLs de thumbnails à fusionner: ${multiUrls.join(', ')}. Niche: ${niche}.`;
+      personaCtx='PAS DE VISAGE HUMAIN dans ce thumbnail. Focus uniquement sur l\'objet principal, les textes et les éléments graphiques.';
     }
 
-    // PERSONA CONTEXT
-    let personaContext = '';
-    if(avatarType === 'photo') {
-      personaContext = `Le visage original du thumbnail doit être REMPLACÉ par ${gender==='man'?'un homme':'une femme'} fourni(e) via une photo de référence.${personaDesc ? ' Description: '+personaDesc+'.' : ''} TOUJOURS utiliser "the ${gender} in the attached face reference" pour référencer le visage.`;
-    } else if(avatarType === 'heygen') {
-      personaContext = `Le visage doit être remplacé par un avatar HeyGen. ${heygenDesc || 'Avatar professionnel médical en blouse blanche.'} Décris l'avatar de façon très précise pour que le modèle le reproduise fidèlement.`;
-    } else {
-      personaContext = `Ce thumbnail n'a PAS de visage humain visible. Focus sur l'objet central, les couleurs et le texte.`;
-    }
+    const isBatch=S.tab==='batch';
 
-    // Prompt for analysis
-    const analysisPrompt = `Tu es un expert en analyse de thumbnails YouTube haute performance pour la niche santé.
+    const MASTER_PROMPT=`Tu es un expert mondial en design de thumbnails YouTube haute performance avec 10 ans d'expérience.
 
-${thumbContext}
-${topic ? 'Sujet de la vidéo de l\'utilisateur: "'+topic+'"' : ''}
+SOURCE DU THUMBNAIL:
+${srcCtx}
 
-ANALYSE CE THUMBNAIL et génère:
+SUJET DE LA VIDÉO DE L'UTILISATEUR: "${topic}"
+NICHE: ${niche}
+${headline ? 'HEADLINE SOUHAITÉ: "'+headline+'"' : 'HEADLINE: génère automatiquement selon le style du thumbnail source'}
 
-1. ANALYSE STRUCTURÉE (JSON):
-Réponds d'abord avec un bloc JSON STRICT (sans backticks):
+PERSONA/AVATAR:
+${personaCtx}
+
+${isBatch ? 'MODE BATCH: Analyse et fusionne les éléments de design les plus performants de TOUS les thumbnails fournis.' : ''}
+
+MISSION: Analyser le design du thumbnail source et créer un prompt de clonage ULTRA-PRÉCIS qui:
+1. Reproduit EXACTEMENT le style visuel (layout, couleurs, typographie, éléments graphiques, ambiance)
+2. Adapte TOUT le contenu textuel à "${topic}" 
+3. Est suffisamment détaillé pour que Nano Banana Pro recréé un thumbnail quasi-identique en style
+
+---
+
+RÉPONDS EN 2 PARTIES:
+
+PARTIE 1 — ANALYSE JSON (commence par ### ANALYSE ###):
+Retourne un JSON valide avec exactement ces clés:
 {
-  "layout": "description du layout en 5 mots (ex: Face droite, texte gauche, objet centre)",
-  "style": "type CTR (ex: Urgence médicale, Révélation choc, Liste fascinante)",
-  "main_text": "texte principal visible ou supposé sur le thumbnail",
-  "elements": ["élément1", "élément2", "élément3", "élément4"],
-  "colors": ["#hex1", "#hex2", "#hex3", "#hex4"],
-  "bg_gradient": "description précise du fond (ex: gradient bleu foncé vertical)",
-  "strategy": "explication en 2 phrases de pourquoi ce thumbnail est efficace et ce qui booste le CTR"
+  "layout": "description précise du layout en 8-12 mots",
+  "style_ctr": "type de style CTR (Urgence médicale / Révélation choc / Liste fascinante / Autorité scientifique / Transformation / Comparaison / etc.)",
+  "texte_detecte": "texte principal visible sur le thumbnail original",
+  "background": "description précise du fond: gradient, couleurs, texture, ambiance",
+  "elements": "liste des éléments visuels: flèches, cercles, badges, objets, graphiques, superpositions",
+  "couleurs": ["#hex1","#hex2","#hex3","#hex4","#hex5"],
+  "typographie": "style de police: taille, graisse, couleur, ombre, contour",
+  "composition": "règle des tiers, zones chaudes, hiérarchie visuelle",
+  "pourquoi_ca_marche": "2-3 phrases sur la psychologie derrière ce design et pourquoi il génère des clics"
 }
 
-2. PROMPT DE CLONAGE COMPLET:
-Ensuite, génère un prompt détaillé de 300-400 mots pour recréer ce thumbnail avec Nano Banana Pro (arena.ai).
-Le prompt doit:
-- Spécifier exactement le format: YouTube thumbnail, 16:9, 1920x1080
-- Décrire précisément le fond/background
-- ${avatarType !== 'noface' ? personaContext : 'Décrire uniquement les éléments graphiques sans visage humain'}
-- Décrire le texte (position, couleurs, style typographique, taille)
-- Décrire l'objet ou élément central
-- Décrire tous les accents visuels (flèches, badges, cercles, triangles)
-- Mentionner: doit être lisible à 320x180px
-- Terminer par: NO watermarks, NO logos, NO brand names${avatarType !== 'noface' ? ', NO faces other than the attached reference' : ''}
+PARTIE 2 — PROMPT DE CLONAGE (commence par ### PROMPT ###):
+Génère un prompt en anglais de 400-500 mots ULTRA-PRÉCIS pour Nano Banana Pro (arena.ai).
 
-${isMulti ? 'IMPORTANT: Fusionne les éléments les plus percutants des différents thumbnails pour créer un prompt optimal.' : ''}`;
+Le prompt doit ABSOLUMENT couvrir:
+- Format: "YouTube thumbnail, 16:9, 1920×1080 pixels, ultra high quality, crisp and sharp"
+- Background: décris le fond avec précision (couleurs exactes, gradient direction, texture si applicable)
+- ${avatar!=='noface' ? 'Persona (RIGHT SIDE): position exacte, angle, expression, tenue, éclairage, ombre portée' : 'Composition sans visage humain'}
+- Texte (LEFT/CENTER): chaque ligne de texte avec: position, couleur exacte, taille relative, graisse, contour, ombre, effet
+- Objet central: description photoréaliste ultra-détaillée de l'objet principal adapté à "${topic}"
+- Accents visuels: chaque élément graphique (flèche rouge, cercle, badge, triangle d'avertissement, effet néon, etc.)
+- Ambiance finale: saturation, contraste, netteté, lisibilité à 320×180px
+- Clôture: "NO watermarks, NO logos, NO brand names${avatar!=='noface'?', NO faces other than the attached reference':''}. Must be recognizable at 320×180px on mobile."`;
 
-    const result = await callGroq(analysisPrompt, 2000);
+    // Run analysis
+    const result=await groq(MASTER_PROMPT, 2800);
 
-    // Parse JSON part
-    let analysis = {};
-    try {
-      const jsonMatch = result.match(/\{[\s\S]*?\}/);
-      if(jsonMatch) analysis = JSON.parse(jsonMatch[0]);
-    } catch(e) { console.log('JSON parse issue, using defaults'); }
+    // Parse JSON
+    let analysis={};
+    try{
+      const jMatch=result.match(/### ANALYSE ###[\s\S]*?(\{[\s\S]*?\})/);
+      if(jMatch) analysis=JSON.parse(jMatch[1]);
+    }catch(e){ console.log('JSON parse:', e); }
 
-    // Extract prompt (after JSON block)
-    const promptPart = result.replace(/\{[\s\S]*?\}/, '').trim();
+    // Extract prompt
+    const promptMatch=result.match(/### PROMPT ###([\s\S]*)/);
+    S.prompt=promptMatch ? promptMatch[1].trim() : result;
 
-    finishProgress();
+    // Generate SEO in parallel
+    const seoPromise=groq(`Expert YouTube SEO. Niche: ${niche}. Langue: ${lang}.
+Sujet de la vidéo: "${topic}"
+Style du thumbnail: "${analysis.style_ctr||'clickbait santé'}"
 
-    // Fill in analysis display
-    document.getElementById('an-layout').textContent = analysis.layout || 'Face droite, texte gauche';
-    document.getElementById('an-style').textContent = analysis.style || 'Urgence médicale';
-    document.getElementById('an-text').textContent = analysis.main_text || '—';
-    document.getElementById('an-elements').textContent = (analysis.elements || []).join(', ') || '—';
-    document.getElementById('an-strategy').textContent = analysis.strategy || '—';
+Génère en ${lang}:
 
-    // Colors
-    const colorsEl = document.getElementById('an-colors');
-    colorsEl.innerHTML = '';
-    (analysis.colors || ['#1a3a6b','#e63f2e','#f5c518','#ffffff','#0f0f0f']).forEach(c => {
-      const sw = document.createElement('div');
-      sw.className = 'color-swatch';
-      sw.style.background = c;
-      sw.setAttribute('data-color', c);
-      sw.title = c;
-      colorsEl.appendChild(sw);
+TITRE: (exactement 1 titre YouTube, max 70 caractères, curiosity gap, chiffres si possible, ALL CAPS mots clés)
+DESCRIPTION: (250-350 mots: hook 2 premières lignes, 5-7 bullet points clés, CTA soft, lien dans description mentionné, disclaimer médical si santé)
+TAGS: (exactement 20 tags séparés par |, du plus large au plus spécifique, mix anglais/français si pertinent)
+HASHTAGS: (exactement 8 hashtags pertinents avec #, les plus viraux de la niche)
+
+FORMAT STRICT:
+TITRE: [titre ici]
+DESCRIPTION: [description ici]
+TAGS: [tag1|tag2|tag3...]
+HASHTAGS: [#ht1 #ht2 #ht3...]`, 1200);
+
+    const seoResult=await seoPromise;
+
+    // Parse SEO
+    const titleMatch=seoResult.match(/TITRE:\s*(.+)/);
+    const descMatch=seoResult.match(/DESCRIPTION:\s*([\s\S]*?)(?=TAGS:|$)/);
+    const tagsMatch=seoResult.match(/TAGS:\s*(.+)/);
+    const htMatch=seoResult.match(/HASHTAGS:\s*(.+)/);
+
+    const seoTitle=titleMatch?titleMatch[1].trim():'';
+    const seoDesc=descMatch?descMatch[1].trim():'';
+    const seoTags=tagsMatch?tagsMatch[1].split('|').map(t=>t.trim()).filter(Boolean):[];
+    const seoHt=htMatch?htMatch[1].split(' ').map(h=>h.trim()).filter(h=>h.startsWith('#')):[];
+
+    S.tags=seoTags; S.hashtags=seoHt;
+
+    endProg();
+
+    // Fill analysis UI
+    document.getElementById('an-layout').textContent=analysis.layout||'—';
+    document.getElementById('an-style').textContent=analysis.style_ctr||'—';
+    document.getElementById('an-text').textContent=analysis.texte_detecte||'—';
+    document.getElementById('an-bg').textContent=analysis.background||'—';
+    document.getElementById('an-elements').textContent=analysis.elements||'—';
+    document.getElementById('an-why').textContent=analysis.pourquoi_ca_marche||'—';
+
+    const colEl=document.getElementById('an-colors');
+    colEl.innerHTML='';
+    (analysis.couleurs||['#1a3a6b','#e63f2e','#f5c518','#fff','#000']).forEach(c=>{
+      const s=document.createElement('div');
+      s.className='cswatch'; s.style.background=c; s.title=c;
+      colEl.appendChild(s);
     });
 
-    // Set thumbnail in result
-    const resultImg = document.getElementById('result-thumb-img');
-    if(S.currentThumbBase64) resultImg.src = S.currentThumbBase64;
-    else if(S.currentThumbUrl) resultImg.src = S.currentThumbUrl;
+    // Set thumbnail
+    const ri=document.getElementById('res-img');
+    if(S.thumbB64) ri.src=S.thumbB64;
+    else if(S.thumbUrl) ri.src=S.thumbUrl;
 
-    // Set prompt
-    S.currentPrompt = promptPart || generateFallbackPrompt(analysis, personaContext, avatarType, gender);
-    document.getElementById('main-prompt').textContent = S.currentPrompt;
+    // Fill prompt
+    document.getElementById('main-prompt').textContent=S.prompt;
+
+    // Fill SEO
+    document.getElementById('seo-title').textContent=seoTitle;
+    document.getElementById('title-char').textContent=seoTitle.length+' caractères';
+    document.getElementById('seo-desc').textContent=seoDesc;
+
+    const tagsEl=document.getElementById('seo-tags');
+    tagsEl.innerHTML=seoTags.map(t=>`<div class="tc" onclick="navigator.clipboard.writeText('${t}')">${t}</div>`).join('');
+
+    const htEl=document.getElementById('seo-ht');
+    htEl.innerHTML=seoHt.map(h=>`<div class="tc ht" onclick="navigator.clipboard.writeText('${h}')">${h}</div>`).join('');
 
     // Show results
-    document.getElementById('progress-wrap').classList.remove('show');
-    document.getElementById('results-wrap').classList.add('show');
-    setStep(4);
-    toast('✅ Analyse complète !');
+    document.getElementById('prog-wrap').classList.remove('show');
+    document.getElementById('results').classList.add('show');
+    setTimeout(()=>document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}),200);
+    toast('✅ Analyse & SEO générés !');
 
-    // Scroll to results
-    setTimeout(() => document.getElementById('results-wrap').scrollIntoView({behavior:'smooth',block:'start'}), 200);
-
-  } catch(e) {
-    document.getElementById('progress-wrap').classList.remove('show');
-    toast('❌ Erreur: ' + e.message, 'var(--red)');
+  } catch(e){
+    endProg();
+    document.getElementById('prog-wrap').classList.remove('show');
+    toast('❌ Erreur: '+e.message,'var(--red)');
   }
-
-  btn.disabled = false;
-}
-
-function generateFallbackPrompt(analysis, personaContext, avatarType, gender) {
-  return `YouTube thumbnail, 16:9, 1920x1080, HIGH CONTRAST CLICK-BAIT STYLE.
-
-Background: ${analysis.bg_gradient || 'smooth vertical blue gradient (light sky blue at top, darker saturated blue at bottom)'}. Clean, no noise, no texture.
-
-${avatarType !== 'noface' ? `RIGHT SIDE: photorealistic portrait of ${gender === 'man' ? 'the man' : 'the woman'} in the attached face reference — match his/her face, hair, outfit, and warm confident expression EXACTLY. 3/4 angle or front-facing, clean cutout with subtle drop shadow. Do not invent a different person. CLOSE-UP portrait, head and shoulders fills the right third of the frame.` : 'No human face in this thumbnail.'}
-
-LEFT SIDE: huge bold sans-serif text, ALL CAPS, extreme weight (900). Primary words in WHITE, key words in BRIGHT YELLOW. Heavy black outline (~6px), soft drop shadow, readable at 320x180.
-- Top-left: RED BANNER with short hook text
-- Main headline below: white then yellow key words stacked
-
-CENTER: ${analysis.elements ? analysis.elements.slice(0,2).join(' and ') : 'photorealistic close-up of main subject relevant to the health topic'}. Highly detailed, well-lit, centered in frame.
-
-Accents: red curved arrows pointing at the key element, small yellow warning triangle in upper area, red highlight circles. HIGH SATURATION, tight negative space, punchy colors.
-
-Must read clearly at 320x180 on a phone screen.
-
-NO watermarks, NO logos, NO brand names${avatarType !== 'noface' ? ', NO faces other than the attached reference' : ''}.`;
-}
-
-// ── COPY ──
-function copyPrompt() {
-  navigator.clipboard.writeText(S.currentPrompt).then(() => toast('✅ Prompt copié !'));
+  btn.disabled=false;
 }
 
 // ── VARIANTS ──
-async function generateVariants() {
-  if(!S.currentPrompt) return;
-  const btn = document.querySelector('[onclick="generateVariants()"]');
-  btn.disabled = true; btn.textContent = '⏳ Génération…';
-  try {
-    const varPrompt = `À partir de ce prompt de thumbnail YouTube:
-"${S.currentPrompt.substring(0,500)}..."
+async function genVariants(){
+  const btn=document.querySelector('[onclick="genVariants()"]');
+  btn.disabled=true; btn.textContent='⏳ Génération des variantes…';
+  try{
+    const topic=document.getElementById('my-topic').value.trim();
+    const avatar=S.avatar, gender=S.gender;
+    const personaSuffix=avatar==='photo'?`, NO faces other than the attached reference`:'';
 
-Génère 3 variantes créatives avec des styles différents:
-1. VERSION CHOC (fond rouge dramatique, urgence maximale)
-2. VERSION PREMIUM (fond sombre élégant, texte doré, style médical)
-3. VERSION ÉNIGME (fond mystérieux sombre, texte blanc, curiosity gap maximal)
+    const vPrompt=`À partir du style visuel analysé et du prompt de base suivant:
+"${S.prompt.substring(0,400)}..."
 
-Pour chaque variante, donne:
-- NOM DU STYLE (en majuscules)
-- DESCRIPTION EN 1 LIGNE du concept visuel
-- PROMPT COMPLET (~150 mots)
+Sujet: "${topic}"
 
-Sépare chaque variante avec "---"`;
+Génère 3 variantes de style DIFFÉRENTES. Chaque variante garde le même sujet mais avec un style visuel complètement différent:
 
-    const result = await callGroq(varPrompt, 1500);
-    const parts = result.split('---').filter(p => p.trim());
+VARIANTE 1 — CHOC ROUGE: fond rouge dramatique, urgence maximale, texte blanc et jaune, impact émotionnel fort
+VARIANTE 2 — MÉDICAL PREMIUM: fond bleu marine foncé élégant, texte doré ou blanc, ambiance clinique professionnelle
+VARIANTE 3 — MINIMALISTE IMPACT: fond blanc ou très clair, 1-2 mots géants, objet seul, très peu d'éléments, simplicité maximale
 
-    const variantNames = ['🔴 VERSION CHOC', '⭐ VERSION PREMIUM', '🌑 VERSION ÉNIGME'];
-    const variantDescs = ['Fond rouge dramatique, urgence maximale', 'Style élégant médical, texte doré', 'Mystérieux, curiosity gap maximal'];
+Pour chaque variante:
+STYLE: [nom du style en majuscules]
+DESCRIPTION: [1 phrase du concept]
+PROMPT: [prompt complet de 150-200 mots en anglais pour arena.ai, incluant "YouTube thumbnail, 16:9, 1920x1080"${avatar!=='photo'?'':', reference face must be used'}]
 
-    const list = document.getElementById('variants-list');
-    list.innerHTML = '';
-    parts.forEach((part, i) => {
-      const div = document.createElement('div');
-      div.className = 'variant-card' + (i===0?' selected':'');
-      div.onclick = () => { document.querySelectorAll('.variant-card').forEach(c=>c.classList.remove('selected')); div.classList.add('selected'); S.selectedVariant = i; };
-      div.innerHTML = `<div class="variant-style">${variantNames[i]||'VARIANTE '+(i+1)}</div><div class="variant-desc">${variantDescs[i]||''}</div><div style="margin-top:8px;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;line-height:1.6;max-height:80px;overflow:hidden">${part.substring(0,300)}…</div>`;
-      div.setAttribute('data-prompt', part.trim());
+Sépare chaque variante par "---VARIANTE---"`;
+
+    const res=await groq(vPrompt,1600);
+    const parts=res.split(/---VARIANTE---/).filter(p=>p.trim());
+    S.varPrompts=[];
+
+    const names=['🔴 CHOC ROUGE','⭐ MÉDICAL PREMIUM','🤍 MINIMALISTE IMPACT'];
+    const descs=['Fond rouge, urgence maximale','Bleu marine élégant, clinique','Simplicité & impact visuel'];
+
+    const list=document.getElementById('var-list');
+    list.innerHTML='';
+    parts.forEach((part,i)=>{
+      const pMatch=part.match(/PROMPT:([\s\S]*)/);
+      const prompt=pMatch?pMatch[1].trim():part.trim();
+      S.varPrompts.push(prompt);
+      const div=document.createElement('div');
+      div.className='var-card'+(i===0?' sel':'');
+      div.onclick=()=>{document.querySelectorAll('.var-card').forEach(c=>c.classList.remove('sel'));div.classList.add('sel');S.selVar=i;};
+      div.innerHTML=`<div class="var-style">${names[i]||'VARIANTE '+(i+1)}</div><div class="var-desc">${descs[i]||''}</div><div class="var-preview">${prompt.substring(0,200)}…</div>`;
       list.appendChild(div);
     });
 
-    document.getElementById('variants-section').style.display = 'block';
-    document.getElementById('variants-section').scrollIntoView({behavior:'smooth'});
+    document.getElementById('var-panel').style.display='block';
+    document.getElementById('var-panel').scrollIntoView({behavior:'smooth'});
     toast('✅ 3 variantes générées !');
-  } catch(e) { toast('❌ '+e.message, 'var(--red)'); }
-  btn.disabled = false; btn.textContent = '🎨 3 variantes de style';
+  }catch(e){toast('❌ '+e.message,'var(--red)');}
+  btn.disabled=false; btn.textContent='🎨 Générer 3 variantes de style';
 }
 
-function copyVariant() {
-  const selected = document.querySelector('.variant-card.selected');
-  if(!selected) return toast('⚠️ Sélectionne une variante', 'var(--gold)');
-  navigator.clipboard.writeText(selected.getAttribute('data-prompt')).then(() => toast('✅ Variante copiée !'));
+function copyVar(){
+  const p=S.varPrompts[S.selVar];
+  if(!p) return toast('⚠️ Sélectionne une variante','var(--gold)');
+  navigator.clipboard.writeText(p).then(()=>toast('✅ Variante copiée !'));
 }
 
-// ── REGENERATE ──
-function regenerate() { analyzeAndGenerate(); }
+// ── COPY ──
+function copyEl(id){ navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>toast('✅ Copié !')); }
+function copyTags(){ navigator.clipboard.writeText(S.tags.join(', ')).then(()=>toast('✅ Tags copiés !')); }
+function copyHt(){ navigator.clipboard.writeText(S.hashtags.join(' ')).then(()=>toast('✅ Hashtags copiés !')); }
 
 // ── HISTORY ──
-function saveToHistory() {
-  const entry = {
-    id: Date.now(),
-    thumbUrl: S.currentThumbUrl || '',
-    prompt: S.currentPrompt,
-    niche: S.selectedNiche,
-    date: new Date().toLocaleDateString('fr'),
-  };
+function saveHist(){
+  const entry={id:Date.now(),thumbUrl:S.thumbUrl||'',prompt:S.prompt,topic:document.getElementById('my-topic').value.trim(),date:new Date().toLocaleDateString('fr')};
   S.history.unshift(entry);
-  if(S.history.length > 10) S.history = S.history.slice(0,10);
-  localStorage.setItem('clone_history', JSON.stringify(S.history));
-  renderHistory();
+  if(S.history.length>8) S.history=S.history.slice(0,8);
+  localStorage.setItem('ksc_hist',JSON.stringify(S.history));
+  renderHist();
   toast('✅ Sauvegardé !');
 }
 
-function renderHistory() {
-  const strip = document.getElementById('history-strip');
-  const items = document.getElementById('history-items');
-  if(!S.history.length) { strip.style.display='none'; return; }
-  strip.style.display = 'block';
-  items.innerHTML = S.history.map(h => `
-    <div class="hist-card" onclick="loadHistoryItem(${h.id})">
-      ${h.thumbUrl ? `<img class="hist-thumb" src="${h.thumbUrl}" onerror="this.style.background='var(--dim)'"/>` : '<div class="hist-thumb" style="display:grid;place-items:center;font-size:20px">🖼️</div>'}
-      <div class="hist-label">${h.niche} · ${h.date}</div>
-    </div>`).join('');
+function renderHist(){
+  const strip=document.getElementById('hist-strip'),items=document.getElementById('hist-items');
+  if(!S.history.length){strip.style.display='none';return;}
+  strip.style.display='block';
+  items.innerHTML=S.history.map(h=>`<div class="hcard" onclick="loadHist(${h.id})">
+    ${h.thumbUrl?`<img src="${h.thumbUrl}" onerror="this.style.background='var(--dim)'"/>`:`<div style="width:100%;height:67px;background:var(--dim);display:grid;place-items:center;font-size:18px">🖼️</div>`}
+    <div class="hcard-lbl">${h.topic||'Clone'} · ${h.date}</div>
+  </div>`).join('');
 }
 
-function loadHistoryItem(id) {
-  const item = S.history.find(h => h.id===id);
-  if(!item) return;
-  S.currentPrompt = item.prompt;
-  S.currentThumbUrl = item.thumbUrl;
-  document.getElementById('main-prompt').textContent = item.prompt;
-  if(item.thumbUrl) document.getElementById('result-thumb-img').src = item.thumbUrl;
-  document.getElementById('results-wrap').classList.add('show');
-  document.getElementById('results-wrap').scrollIntoView({behavior:'smooth'});
+function loadHist(id){
+  const item=S.history.find(h=>h.id===id); if(!item) return;
+  S.prompt=item.prompt; S.thumbUrl=item.thumbUrl||'';
+  document.getElementById('main-prompt').textContent=item.prompt;
+  if(item.thumbUrl){const ri=document.getElementById('res-img');ri.src=item.thumbUrl;}
+  document.getElementById('results').classList.add('show');
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
   toast('📂 Clone chargé');
 }
 
 // ── TOAST ──
-function toast(msg, col='var(--green)') {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.style.color = col;
+function toast(msg,col='var(--green)'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.color=col;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  setTimeout(()=>t.classList.remove('show'),2500);
 }
 
 // ── INIT ──
-renderHistory();
+renderHist();
 </script>
 </body>
 </html>
