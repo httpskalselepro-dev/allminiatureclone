@@ -533,10 +533,10 @@ select option{background:#0f1220}
 <div class="toast" id="toast"></div>
 
 <script>
-const KEY = '71843fb2b085465c8195a4e236105dab.82CfT668UvaST373';
-const GLM_ENDPOINT = 'https://api.z.ai/api/paas/v4/chat/completions';
-const GLM_TEXT_MODEL = 'glm-4.6';
-const GLM_VISION_MODEL = 'glm-4.6v';
+const KEY = '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';
+const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_TEXT_MODEL = 'openai/gpt-oss-120b';
+const GROQ_VISION_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct';
 const S = {
   tab:'url', avatar:'photo', gender:'femme',
   thumbUrl:'', thumbB64:'', batchUrls:[], batchImgUrls:[],
@@ -664,32 +664,32 @@ function loadBatch(){
   toast(`✅ ${lines.length} URL${lines.length>1?'s':''} chargée${lines.length>1?'s':''}`);
 }
 
-// ── GLM (Z.ai) ──
+// ── GROQ ──
 // images: optional array of image URLs / data-URIs (base64). When provided, the
-// vision model (glm-4.6v) is used so the AI actually SEES the thumbnail and can
-// extract exact colors/layout instead of guessing from text alone.
-async function glm(prompt, maxTok=2500, images=null){
-  const key=localStorage.getItem('glm_key')||KEY;
+// vision model (llama-4-scout) is used so the AI actually SEES the thumbnail and
+// can extract exact colors/layout instead of guessing from text alone.
+async function groq(prompt, maxTok=2500, images=null){
+  const key=localStorage.getItem('groq_key')||KEY;
   const useVision = images && images.length;
   const content = useVision
     ? [...images.map(url=>({type:'image_url',image_url:{url}})), {type:'text',text:prompt}]
     : prompt;
-  const r=await fetch(GLM_ENDPOINT,{
+  const r=await fetch(GROQ_ENDPOINT,{
     method:'POST',
     headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
     body:JSON.stringify({
-      model: useVision ? GLM_VISION_MODEL : GLM_TEXT_MODEL,
+      model: useVision ? GROQ_VISION_MODEL : GROQ_TEXT_MODEL,
       messages:[{role:'user',content}],
       temperature:0.7,
       max_tokens:maxTok
     })
   });
   const d=await r.json();
-  if(d.error) throw new Error(d.error.message||d.error.code||'Erreur API GLM (Z.ai)');
+  if(d.error) throw new Error(d.error.message||d.error.code||'Erreur API Groq');
   return d.choices?.[0]?.message?.content||'';
 }
-// Backward-compatible alias (in case other parts of the codebase still call groq(...))
-const groq = glm;
+// Backward-compatible alias (in case other parts of the codebase still call glm(...))
+const glm = groq;
 
 // ── PROGRESS ──
 let _pt=null,_pi=0;
